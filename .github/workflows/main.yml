@@ -38,10 +38,6 @@ jobs:
 
       - name: Get PDFs
         uses: actions/download-artifact@v3
-        with:
-          name: Thesis
-          path: |
-            *.pdf
 
       - name: Run VeraPDF
         run: verify Thesis/*.pdf | tee /dev/stderr | grep -qE 'nonCompliant="0"'
