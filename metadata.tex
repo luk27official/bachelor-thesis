@@ -3,8 +3,8 @@
 %%% Choose a language %%%
 
 \newif\ifEN
-\ENtrue   % uncomment this for english
-%\ENfalse   % uncomment this for czech
+%\ENtrue   % uncomment this for english
+\ENfalse   % uncomment this for czech
 
 %%% Configuration of the title page %%%
 
@@ -36,21 +36,21 @@
 %%% Fill in your details %%%
 
 % (Note: \xxx is a "ToDo label" which makes the unfilled visible. Remove it.)
-\def\ThesisTitle{\xxx{Thesis title}}
-\def\ThesisAuthor{\xxx{Your Name Surname}}
-\def\YearSubmitted{\xxx{YEAR}}
+\def\ThesisTitle{{Rozšíření funkcionality webového rozhraní pro predikci vazebných míst proteinů}}
+\def\ThesisAuthor{{Lukáš Polák}}
+\def\YearSubmitted{{2023}}
 
 % department assigned to the thesis
-\def\Department{\xxx{Name of the department}}
+\def\Department{{Katedra softwarového inženýrství}}
 % Is it a department (katedra), or an institute (ústav)?
-\def\DeptType{\xxx{Department}}
+\def\DeptType{{Katedra}}
 
-\def\Supervisor{\xxx{Supername Supersurname}}
-\def\SupervisorsDepartment{\xxx{department}}
+\def\Supervisor{{doc. RNDr. David Hoksza, Ph.D.}}
+\def\SupervisorsDepartment{{Katedra softwarového inženýrství}}
 
 % Study programme and specialization
-\def\StudyProgramme{\xxx{study programme}}
-\def\StudyBranch{\xxx{study branch}}
+\def\StudyProgramme{{Programování a vývoj software Bc.}}
+\def\StudyBranch{{IPP2}}
 
 \def\Dedication{%
 Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book authors and food providers.}
@@ -68,7 +68,7 @@ Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book 
 % 3 to 5 keywords (recommended), each enclosed in curly braces.
 % Keywords are useful for indexing and searching for the theses by topic.
 \def\Keywords{%
-\xxx{{key} {words}}
+{{bioinformatika} {web} {software} {protein}}
 }
 
 % If your abstracts are long and do not fit in the infopage, you can make the
@@ -81,13 +81,13 @@ Dedication. \xxx{It is nice to say thanks to supervisors, friends, family, book 
 \ifEN\relax\else
 % If you are writing a czech thesis, you additionally need to fill in the
 % english translation of the metadata here!
-\def\ThesisTitleEN{\xxx{Thesis title in English}}
-\def\DepartmentEN{\xxx{Name of the department in English}}
-\def\DeptTypeEN{\xxx{Department}}
-\def\SupervisorsDepartmentEN{\xxx{Superdepartment}}
-\def\StudyProgrammeEN{\xxx{study programme}}
-\def\StudyBranchEN{\xxx{study branch}}
+\def\ThesisTitleEN{{Extension of web-based interface for protein binding sites prediction}}
+\def\DepartmentEN{{Department of Software Engineering}}
+\def\DeptTypeEN{{Department}}
+\def\SupervisorsDepartmentEN{{Department of Software Engineering}}
+\def\StudyProgrammeEN{{Programming and software development Bc.}}
+\def\StudyBranchEN{{IPP2}}
 \def\KeywordsEN{%
-\xxx{{key} {words}}
+{{bioinformatics} {web} {software} {protein}}
 }
 \fi

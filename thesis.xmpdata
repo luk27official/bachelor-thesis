@@ -1,7 +1,7 @@
 % Metadata to be stored in PDF, see documentation of the pdfx package for more details.
 
-\Author{Name Surname}
-\Title{Thesis title}
-\Keywords{keywords\sep more such\sep yet another}
+\Author{Lukáš Polák}
+\Title{Rozšíření funkcionality webového rozhraní pro predikci vazebných míst proteinů}
+\Keywords{bioinformatika\sep web\sep software\sep protein}
 \Subject{Abstract of thesis}
-\Publisher{Charles University}
+\Publisher{Univerzita Karlova}
