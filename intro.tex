@@ -1,16 +1,12 @@
 
 \chapwithtoc{Introduction}
 
-Introduction should answer the following questions, ideally in this order:
-\begin{enumerate}
-\item What is the nature of the problem the thesis is addressing?
-\item What is the common approach for solving that problem now?
-\item How this thesis approaches the problem?
-\item What are the results? Did something improve?
-\item What can the reader expect in the individual chapters of the thesis?
-\end{enumerate}
+Protein ligand-binding sites are a vital aspect of nowaday's drug discovery and development. Identification of the potential binding sites allows understanding of various molecule interactions, which may lead to interesting conclusions. Recognizing the binding sites is thus very important for further bioinformatic research and studies \cite{10.1093/bioinformatics/btt447}.
 
-Expected length of the introduction is between 1--4 pages. Longer introductions may require sub-sectioning with appropriate headings --- use \texttt{\textbackslash{}section*} to avoid numbering (with section names like `Motivation' and `Related work'), but try to avoid lengthy discussion of anything specific. Any ``real science'' (definitions, theorems, methods, data) should go into other chapters.
-\todo{You may notice that this paragraph briefly shows different ``types'' of `quotes' in TeX, and the usage difference between a hyphen (-), en-dash (--) and em-dash (---).}
+P2Rank is a machine-learning based Java tool developed at MFF UK which allows users to predict the ligand-binding sites for a given protein. P2Rank works standalone and outperforms most of the existing binding sites prediction tools \cite{krivak2018p2rank}. PrankWeb is a web-based tool which is providing an user-friendly interface for P2Rank. A significant difference between PrankWeb and other web-based tools is that PrankWeb does not employ either JMol nor JSMol for online visualization of the results \cite{jendele2019prankweb}. Both JMol and JSMol are Java based. Java applets are rather old-fashioned and in most cases even deprecated. The original PrankWeb auhtors decided to use the LiteMol and Protael libraries for the online visualization. Although these libraries are still working, they are not actively developed anymore.
 
-It is very advisable to skim through a book about scientific English writing before starting the thesis. I can recommend `\citetitle{glasman2010science}' by \citet{glasman2010science}.
+There are two main goals of this thesis. The first goal is to update the PrankWeb interface to use different libraries for the visualization, namely MolStar and RCSB Saguaro 1D Feature Viewer. This will improve not only the visual appearance of the results, but also the performance. Furthermore, the updated libraries are actively developed and thus potentially more reliable in the future. The second goal is to update the PrankWeb architecture, so that more computing may be done on the predicted binding sites both on the client-side and the server-side. This introduces a potential to create custom plug-ins for the web interface.
+
+The thesis should present a working version of the updated PrankWeb tool. The updated tool should keep the current functionality of the website and visualize the results via a more user-friendly interface. The tool should also be able to perform computations on the predicted binding sites.
+
+In the first chapter, the reader will be introduced to the basics of protein and ligand-binding sites problematic, later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself. The reader will also be briefly introduced to similar web-tools. The second chapter will cover the programming part of the work. Firstly, we will introduce the usage of the updated libraries and other frontend design decisions. Secondly, we will cover the plug-in architecture including both the client-side and the server-side computations in the respective subchapters. In the third chapter, we will cover the tool usage from two perspectives - the user and the developer. The conclusion will cover the results and the potential extensions to the tool.
