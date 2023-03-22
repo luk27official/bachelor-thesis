@@ -1,52 +1,56 @@
-\chapter{Important first chapter}
+\chapter{Introduction and background}
 \label{chap:refs}
 
-First chapter usually builds the theoretical background necessary for readers to understand the rest of the thesis. You should summarize and reference a lot of existing literature and research.
+In this chapter, we will discuss the basics of protein and ligand-binding sites problematic, later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself. The reader will also be briefly introduced to similar web-tools.
 
-You should use the standard \emph{citations}\todo{Use \textbackslash{}emph command like this, to highlight the first occurrence of an important word or term. Reader will notice it, and hopefully remember the importance.}.
+%You should use the standard \emph{citations}\todo{Use \textbackslash{}emph command like this, to highlight the first occurrence of an important word or term. Reader will notice it, and hopefully remember the importance.}.
 
-\begin{description}
-\item[Obtaining bibTeX citation] Go to Google Scholar\footnote{\url{https://scholar.google.com}}\todo{This footnote is an acceptable way to `cite' webpages or URLs. Documents without proper titles, authors and publishers generally do not form citations. For this reason, avoid citations of wikipedia pages.}, find the relevant literature, click the tiny double-quote button below the link, and copy the bibTeX entry.
-\item[Saving the citation] Insert the bibTeX entry to the file \texttt{refs.bib}. On the first line of the entry you should see the short reference name --- from Scholar, it usually looks like \texttt{author2015title} --- you will use that to refer to the citation.
-\item[Using the citation] Use the \verb|\cite| command to typeset the citation number correctly in the text; a long citation description will be automaticaly added to the bibliography at the end of the thesis. Always use a non-breakable space before the citing parenthesis to avoid unacceptable line breaks:
+\section{Introduction to molecular biology}
+
+\xxx{TODO}
+
+\section{P2Rank tool}
+
+P2Rank allows its users to predict the ligand-binding sites for a given protein. In contrast to other projects, P2Rank was one of the first tools to employ machine learning for predicting the pockets. P2Rank outperforms most of the existing binding sites prediction tools \cite{krivak2018p2rank}. Most of the other tools include geometry-based, energetic-based, or template-based methods that are not as efficient and rather outdated. Moreover, P2Rank works as a standalone application and is fully automated, which makes the tool very intuitive and easy to use.
+
+P2Rank works with specific file formats such as PDB and PDBx/mmCIF. \xxx{maybe insert some detailed explanation of the formats?} After running the tool on a specific protein structure file, the tool will provide a CSV output file with the prediction and residue-level scores. The output file includes predicted pockets, their ranks, center coordinates, adjacent residues, related surface atoms and a probability score.
+
+The following command would run P2Rank on the protein structure file \texttt{1fbl.pdb}:
+
 \begin{Verbatim}
-Trees utilize gravity to invade ye
-noble sires~\cite{newton1666apple}.
+    prank predict -f test_data/1fbl.pdb 
 \end{Verbatim}
-\item[Why should I bother with citations at all?] For two main reasons:
-\begin{itemize}
-\item You do not have to explain everything in the thesis; instead you send the reader to refer to details in some other literature. Use citations to simplify the detailed explanations.
-\item If you describe something that already exists without using a citation, the reviewer may think that you \emph{claim} to have invented it. Expectably, they will demand academic correctness, and, from your perspective, being accused of plagiarism is not a good starting point for a successful defense. Use citations to identify the people who invented the ideas that you build upon.
-\end{itemize}
-\item[How many citations should I use?]
-Cite any non-trivial building block or assumption that you use, if it is published in the literature. You do not have to cite trivia, such as the basic definitions taught in the introductory courses.
 
-The rule of thumb is that you should read, understand and briefly review at least around 4 scientific papers. A thesis that contains less than 3 sound citations will spark doubt in reviewers.
-\end{description}
+The tool was written in Java and requires only the JRE to run. Additionally, the source codes are publicly available at GitHub\footnote{\url{https://github.com/rdk/p2rank}}. This allows the users to potentially modify the tool to their respective needs. 
 
-There are several main commands for inserting citations, used as follows:
+\section{PrankWeb architecture}
+
+PrankWeb consists of several components that cooperate together. Currently, the application is deployed via Docker\footnote{\url{https://www.docker.com/}} containers that are described in a \texttt{docker-compose.yml} file. The application consists of the following components:
+
 \begin{itemize}
-\item \citet{knuth1979tex} described a great system for typesetting theses.
-\item We are typesetting this thesis with \LaTeX, which is based on \TeX{} and METAFONT~\cite{knuth1979tex}.
-\item \TeX{} was expanded to \LaTeX{} by \citet{lamport1994latex}, hence the name.
-\item Revered are the authors of these systems!~\cite{knuth1979tex,lamport1994latex}
+    \item \textbf{gateway} - a reverse proxy that is responsible for routing the requests to the respective backend services
+    \item \textbf{rabbitmq} - a broker that is used for communication between the gateway and the backend services
+    \item \textbf{flower} - a tool for monitoring the RabbitMQ broker and Celery workers
+    \item \textbf{web-server} - a WSGI server that is responsible for serving the web application
+    \item \textbf{executor-p2rank} - a backend service that is responsible for running the P2Rank tool, employs Celery workers
+    \item \textbf{executor-docking} - a backend service that is responsible for running the docking tool, employs Celery workers \xxx{docking not done yet though}
+    \item \textbf{prometheus} - a tool for monitoring the Docker containers 
 \end{itemize}
 
-\section{Some extra assorted hints before you start writing English}
+Now we will present the Docker containers in more detail to get a broader knowledge of the architecture.
 
-Strictly adhere to the English word order rules. The sentences follow a fixed structure with a subject followed by a verb and an object (in this order). Exceptions to this rule must be handled specially, and usually separated by commas.
+\subsection{Gateway}
 
-Mind the rules for placing commas:
-\begin{itemize}
-\item Use the \emph{Oxford comma} before `and' and `or' at the end of a longer, comma-separated list of items. Certainly use it to disambiguate any possible mixtures of conjunctions: \textit{`The car is available in red, red and green, and green versions.'}
-\item Do not use the comma before subordinate clauses that begin with `that' (like this one). English does not use subordinate clauses as often as Slavic languages because the lack of a suitable word inflection method makes them hard to understand. In scientific English, try to avoid them as much as possible. Ask doubtfully whether each `which' and `when' is necessary --- most of these helper conjunctions can be removed by converting the clause to non-subordinate.
+The gateway container is a reverse proxy that is responsible for routing the requests to the backend. In PrankWeb, we utilize the Nginx web server as a reverse proxy. The Nginx configuration file is located in the \texttt{gateway/nginx.conf} file. The server configuration includes not only the reverse proxy routes, but a mapping to the Flower and Prometheus services as well.
 
-As an usual example, \xxx{\textit{`The sentence, which I wrote, seemed ugly.'}} is perfectly bad; slightly improved by \xxx{\textit{`The sentence that I wrote seemed ugly.'}}, which can be easily reduced to \textit{`The sentence I wrote seemed ugly.'}. A final version with added storytelling value could say \textit{`I wrote a sentence but it seemed ugly.'}
-\item Consider placing extra commas around any parts of the sentence that break the usual word order, especially if they are longer than a single word.
-\end{itemize}
+Moreover, \texttt{gateway/Dockerfile} is responsible for the installation of the frontend. The frontend is a React application built via webpack. PrankWeb utilizes two main external libraries for the bioinformatic part of the application, MolStar and RCSB Saguaro Feature 1D Viewer. We will discuss these libraries in more detail in the next chapter.
 
-Do not write long sentences. One sentence should contain exactly one fact. Multiple facts should be grouped in a paragraph to communicate one coherent idea. Paragraphs are grouped in labeled sections for a sole purpose of making the navigation in the thesis easier. Do not use the headings as `names for paragraphs' --- the text should make perfect sense even if all headings are removed. If a section of your text contains one paragraph per heading, you might have wanted to write an explicit list instead.
+The entire frontend is written in TypeScript, JavaScript, CSS, SCSS, and HTML.
 
-Every noun needs a determiner (`a', `the', `my', `some', \dots); the exceptions to this rule, such as non-adjectivized names and indeterminate plural, are relatively scarce. Without a determiner, a noun can be easily mistaken for something completely different, such as an adjective or a verb.
+\subsection{RabbitMQ}
 
-Consult the books by \citet{glasman2010science} and \citet{sparling1989english} for more useful details.
+\xxx{todo + other containers}
+
+\section{Similar web-tools}
+
+\xxx{todo}
