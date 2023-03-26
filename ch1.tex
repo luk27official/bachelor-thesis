@@ -8,12 +8,13 @@ In this chapter, we will discuss the basics of protein and ligand-binding sites 
 \section{Introduction to molecular biology}
 
 \xxx{TODO}
+\xxx{mention keywords: protein, ligand, binding site, pocket, docking, conservation, prediction, structure, residues, sequence, amino acids}
 
 \section{P2Rank tool}
 
 P2Rank allows its users to predict the ligand-binding sites for a given protein. In contrast to other projects, P2Rank was one of the first tools to employ machine learning for predicting the pockets. P2Rank outperforms most of the existing binding sites prediction tools \cite{krivak2018p2rank}. Most of the other tools include geometry-based, energetic-based, or template-based methods that are not as efficient and rather outdated. Moreover, P2Rank works as a standalone application and is fully automated, which makes the tool very intuitive and easy to use.
 
-P2Rank works with specific file formats such as PDB and PDBx/mmCIF. \xxx{maybe insert some detailed explanation of the formats?} After running the tool on a specific protein structure file, the tool will provide a CSV output file with the prediction and residue-level scores. The output file includes predicted pockets, their ranks, center coordinates, adjacent residues, related surface atoms and a probability score.
+P2Rank works with specific file formats such as PDB and PDBx/mmCIF. \xxx{maybe insert some detailed explanation of the formats, or add a footnote?} After running the tool on a specific protein structure file, the tool will provide a CSV output file with the prediction and residue-level scores. The output file includes predicted pockets, their ranks, center coordinates, adjacent residues, related surface atoms and a probability score.
 
 The following command would run P2Rank on the protein structure file \texttt{1fbl.pdb}:
 
@@ -21,11 +22,11 @@ The following command would run P2Rank on the protein structure file \texttt{1fb
     prank predict -f test_data/1fbl.pdb 
 \end{Verbatim}
 
-The tool was written in Java and requires only the JRE to run. Additionally, the source codes are publicly available at GitHub\footnote{\url{https://github.com/rdk/p2rank}}. This allows the users to potentially modify the tool to their respective needs. 
+The tool was written in Java and requires only the JRE\footnote{Java Runtime Environment} to run. Additionally, the source codes are publicly available at GitHub\footnote{Source codes for P2Rank are available at \url{https://github.com/rdk/p2rank}.}. This allows the users to potentially modify the tool to their respective needs. 
 
 \section{PrankWeb architecture}
 
-PrankWeb consists of several components that cooperate together. Currently, the application is deployed via Docker\footnote{\url{https://www.docker.com/}} containers that are described in a \texttt{docker-compose.yml} file. The application consists of the following components:
+PrankWeb consists of several components that cooperate together. Currently, the application is deployed via Docker\footnote{Docker is a virtualization tool providing a stable interface for isolating and running applications. More information available at \url{https://www.docker.com/}.} containers that are described in the \texttt{docker-compose.yml} file. The application consists of the following components:
 
 \begin{itemize}
     \item \textbf{gateway} - a reverse proxy that is responsible for routing the requests to the respective backend services
@@ -37,7 +38,13 @@ PrankWeb consists of several components that cooperate together. Currently, the 
     \item \textbf{prometheus} - a tool for monitoring the Docker containers 
 \end{itemize}
 
-Now we will present the Docker containers in more detail to get a broader knowledge of the architecture.
+Some of the containers include environment variables that are required for the proper functionality. The environment variables are specified in the \texttt{docker-compose.yml} file. The user may modify these also by creating a \texttt{.env} file in the root directory of the project.
+
+The \texttt{docker-compose.yml} file thus contains the entire PrankWeb logic. When employing a new plug-in or a new feature, a container may be introduced to this file to get easily integrated into the application.
+
+Each of the containers is defined by a respective \texttt{Dockerfile}. Some containers are dependent on the order of deployment, some containers include a Docker volume definition that ensures the persistence of the data.
+
+Now we will present the current Docker containers in more detail to get a broader knowledge of the architecture.
 
 \subsection{Gateway}
 
@@ -49,7 +56,30 @@ The entire frontend is written in TypeScript, JavaScript, CSS, SCSS, and HTML.
 
 \subsection{RabbitMQ}
 
-\xxx{todo + other containers}
+RabbitMQ is a message broker that is used to provide communication between the web server and the backend workers, in our case Celery. RabbitMQ is configured via the \texttt{rabbitmq/rabbitmq/rabbitmq.conf} file. PrankWeb does not require a complex configuration of this service, although the service is still necessary for the communication.
+
+\subsection{Flower}
+
+Flower is a tool for monitoring the broker and Celery workers functionality. Flower container does not need any specific configuration, it is only necessary to correctly run it alongside the RabbitMQ container. \xxx{is the service exposed at some port? possibly 5555}
+
+\subsection{Web-server}
+
+The web-server container is a WSGI server that is responsible for serving the web application. Currently, we employ the Gunicorn server. The second main part of this continer is Flask framework. The Flask application defines all of the REST API endpoints for interaction between the frontend and the backend. This application also defines a Celery client that is responsible for sending the tasks to the Celery workers based on the API calls.
+
+\xxx{TODO}
+
+\subsection{Executor-P2Rank}
+
+\xxx{TODO}
+
+\subsection{Executor-Docking}
+
+\xxx{TODO}
+
+\subsection{Prometheus}
+
+\xxx{TODO}
+
 
 \section{Similar web-tools}
 
