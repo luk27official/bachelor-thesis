@@ -14,7 +14,7 @@ In this chapter, we will discuss the basics of protein and ligand-binding sites 
 
 P2Rank allows its users to predict the ligand-binding sites for a given protein. In contrast to other projects, P2Rank was one of the first tools to employ machine learning for predicting the pockets. P2Rank outperforms most of the existing binding sites prediction tools \cite{krivak2018p2rank}. Most of the other tools include geometry-based, energetic-based, or template-based methods that are not as efficient and rather outdated. Moreover, P2Rank works as a standalone application and is fully automated, which makes the tool very intuitive and easy to use.
 
-P2Rank works with specific file formats such as PDB and PDBx/mmCIF. \xxx{maybe insert some detailed explanation of the formats, or add a footnote?} After running the tool on a specific protein structure file, the tool will provide a CSV output file with the prediction and residue-level scores. The output file includes predicted pockets, their ranks, center coordinates, adjacent residues, related surface atoms and a probability score.
+P2Rank works with specific file formats such as PDB and PDBx/mmCIF. \xxx{maybe insert some detailed explanation of the formats including JSON, or add a footnote?} After running the tool on a specific protein structure file, the tool will provide a CSV output file with the prediction and residue-level scores. The output file includes predicted pockets, their ranks, center coordinates, adjacent residues, related surface atoms and a probability score.
 
 The following command would run P2Rank on the protein structure file \texttt{1fbl.pdb}:
 
@@ -22,7 +22,7 @@ The following command would run P2Rank on the protein structure file \texttt{1fb
     prank predict -f test_data/1fbl.pdb 
 \end{Verbatim}
 
-The tool was written in Java and requires only the JRE\footnote{Java Runtime Environment} to run. Additionally, the source codes are publicly available at GitHub\footnote{Source codes for P2Rank are available at \url{https://github.com/rdk/p2rank}.}. This allows the users to potentially modify the tool to their respective needs. 
+The tool was written in Java and requires only the JRE\footnote{Java Runtime Environment.} to run. Additionally, the source codes are publicly available at GitHub\footnote{Source codes for P2Rank are available at \url{https://github.com/rdk/p2rank}.}. This allows the users to potentially modify the tool to their respective needs. 
 
 \section{PrankWeb architecture}
 
@@ -64,22 +64,35 @@ Flower is a tool for monitoring the broker and Celery workers functionality. Flo
 
 \subsection{Web-server}
 
-The web-server container is a WSGI server that is responsible for serving the web application. Currently, we employ the Gunicorn server. The second main part of this continer is Flask framework. The Flask application defines all of the REST API endpoints for interaction between the frontend and the backend. This application also defines a Celery client that is responsible for sending the tasks to the Celery workers based on the API calls.
-
-\xxx{TODO}
+The web-server container is a WSGI server that is responsible for serving the web application. Currently, we employ the Gunicorn server. The second main part of this continer is Flask framework. The Flask application defines all of the REST API endpoints for interaction between the frontend and the backend. This application also defines a Celery client that is responsible for sending the tasks to the backend Celery workers based on the API calls.
 
 \subsection{Executor-P2Rank}
 
-\xxx{TODO}
+This container is responsible for creating the prediction via the P2Rank tool. P2Rank executor is written in Python and utilizes the Celery framework for the task management. Celery enables the server to use multiple threads and process the requests in parallel. The executor's Celery listener firstly receives a request for the prediction given a directory with a name of the structure. Subsequently, the executor prepares the necessary information for the P2Rank tool.
+
+The tool is then run and the results are saved in the
+
+\texttt{predictions/<db-name>\footnote{Represents the current version of database such as v2, v3,  v3-alphafold, v3-conservation-hmm etc.}/<structure-short>\footnote{The shortcut consists of second two letters of the structure identifier, i.e \texttt{SR} for \texttt{2SRC} or \texttt{5V} for \texttt{Q5VSL9}.}/<structure-name>} 
+
+directory. The current hierarchy contains the following:
+\begin{itemize}
+    \item \texttt{input/configuration.json} - a JSON file required for a configuration of the P2Rank tool, containing the structure code, name of the structure file, conservation and others
+    \item \texttt{public/structure.cif.gz} - a gzipped\footnote{Gzip is an Unix-based tool for file compression.} mmCIF/PDB file of the structure
+    \item \texttt{public/prediction.json} - a JSON file containing the prediction results derived from the P2Rank tool specifically for easier parsing in the frontend
+    \item \texttt{public/prankweb.zip} - a zip file containing unmodified, verbose output files directly from the P2Rank tool
+    \item \texttt{info.json} - a JSON file containing current prediction status
+    \item \texttt{log} - a log file containing the output of the P2Rank tool
+\end{itemize}
+
+All of the listed files are exposed via the REST API to the frontend. After posting a prediction request, the frontend periodically polls the \texttt{info.json} file to get the current status of the prediction. Meanwhile, the \texttt{log} file is continuously updated with the output of the P2Rank tool. The logfile is also shown in the frontend to provide the user with the current status of the prediction.
 
 \subsection{Executor-Docking}
 
-\xxx{TODO}
+\xxx{TODO - not implemented yet, but the idea is pretty much the same as for the P2Rank executor}
 
 \subsection{Prometheus}
 
-\xxx{TODO}
-
+Prometheus is a tool for monitoring the Docker containers. It is not necessary for the proper application functionality, but is useful for debugging purposes. The Prometheus container is configured via the \texttt{prometheus/prometheus.yml} file. The interface is exposed at the \texttt{9090} port.
 
 \section{Similar web-tools}
 
