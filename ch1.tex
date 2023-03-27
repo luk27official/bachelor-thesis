@@ -3,8 +3,6 @@
 
 In this chapter, we will discuss the basics of protein and ligand-binding sites problematic, later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself. The reader will also be briefly introduced to similar web-tools.
 
-%You should use the standard \emph{citations}\todo{Use \textbackslash{}emph command like this, to highlight the first occurrence of an important word or term. Reader will notice it, and hopefully remember the importance.}.
-
 \section{Introduction to molecular biology}
 
 \xxx{TODO}
@@ -38,6 +36,8 @@ PrankWeb consists of several components that cooperate together. Currently, the 
     \item \textbf{prometheus} - a tool for monitoring the Docker containers 
 \end{itemize}
 
+\xxx{TODO: add a diagram of the architecture}
+
 Some of the containers include environment variables that are required for the proper functionality. The environment variables are specified in the \texttt{docker-compose.yml} file. The user may modify these also by creating a \texttt{.env} file in the root directory of the project.
 
 The \texttt{docker-compose.yml} file thus contains the entire PrankWeb logic. When employing a new plug-in or a new feature, a container may be introduced to this file to get easily integrated into the application.
@@ -60,7 +60,7 @@ RabbitMQ is a message broker that is used to provide communication between the w
 
 \subsection{Flower}
 
-Flower is a tool for monitoring the broker and Celery workers functionality. Flower container does not need any specific configuration, it is only necessary to correctly run it alongside the RabbitMQ container. \xxx{is the service exposed at some port? possibly 5555}
+Flower is a tool for monitoring the broker and Celery workers functionality. Flower container does not need any specific configuration, it is only necessary to correctly run it alongside the RabbitMQ container.
 
 \subsection{Web-server}
 
@@ -95,5 +95,45 @@ All of the listed files are exposed via the REST API to the frontend. After post
 Prometheus is a tool for monitoring the Docker containers. It is not necessary for the proper application functionality, but is useful for debugging purposes. The Prometheus container is configured via the \texttt{prometheus/prometheus.yml} file. The interface is exposed at the \texttt{9090} port.
 
 \section{Similar web-tools}
+
+The main motivation for the creation of PrankWeb was to provide a web-based ligand binding site prediction tool that does employ the newest technologies not only for the prediction itself, but also for the web application. One of the goals of this thesis is to replace the outdated plugins for the structure, pockets and binding sites visualization to keep the application relevant and up-to-date.
+
+There are a few working web-tools that are able to predict binding sites for the structure as well. The main issue with these tools is that most of them are utilizing outdated technologies and do not appear to be as intuitive as PrankWeb\cite{jendele2019prankweb}. Moreover, PrankWeb focuses on the visual side of the prediction and provides a more detailed view of the results, while the other tools are relying on the user to interpret the downloadable results in other tools such as PyMOL.
+
+We will cover a few of the existing web-tools to provide a better understanding of the current state of the art.
+
+\subsection{IntFOLD}
+
+IntFOLD\footnote{Available at \url{https://www.reading.ac.uk/bioinf/IntFOLD/}.} is a tool that may be used for predicting protein tertiary structures alongside disordered protein regions and ligand binding sites. This tool utilizes the FunFOLD algorithm to create the predictions effectively \cite{10.1093/nar/gkz322}. IntFOLD appears to be still actively developed and is easily accessible to any potential user. The user interface is easy to use and requires only the protein sequence (FASTA) to be entered. On the other side, IntFOLD uses the JSMol library for visualising the protein binding sites. JSMol is more of a simple viewer with less options than the Mol* library used in PrankWeb. Both the visuals and the user interaction are limited. The user may modify the representation with a right mouse button click, but the interface is pretty complicated and non-intuitive. An example prediction is shown in Figure \ref{fig:intfold_prediction}. Like PrankWeb, IntFOLD also provides a download option for the prediction results for PyMOL. The prediction takes a long time to be computed, typically around 24 hours.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/intfold_prediction.png}
+    \caption{JSmol view of ligand binding residues prediction for T1114s2.
+    Available at \url{https://www.reading.ac.uk/bioinf/servlets/nFOLD/IntFOLD7results.jsp?time=17_8_50_25_11-5-2022_CASP_ALL_mesu41b7re376c8l&md5=mesu41b7re376c8l&targetname=T1114s2}. The structure is shown in dark green, the binding sites prediction is shown in blue. Predicted ligands are shown yellow-orange. Available as a sample prediction from IntFOLD.}
+    \label{fig:intfold_prediction}
+\end{figure}
+
+\subsection{COACH}
+
+COACH\footnote{Available at \url{https://seq2fun.dcmb.med.umich.edu/COACH/}} is a web-based tool designed specifically for binding sites prediction, like PrankWeb. COACH uses a combination of substructure-comparison (TM-Site) and sequence-alignment (S-Site) methods for the computations \cite{yang2013protein}. These methods are generally slower than the P2Rank tool, so the prediction once again is available to the user after a longer time, typically around 24 hours. This tool allows the user not only to enter a FASTA sequence, but also to upload or paste a PDB file. COACH allows the user to download the prediction results as well and does not focus on the web visualization that is very limited. An example prediction is shown in Figure \ref{fig:coach_prediction}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.75\linewidth]{img/coach_prediction.png}
+    \caption{JSmol view of a COACH prediction result for a sample protein available at \url{https://seq2fun.dcmb.med.umich.edu/COACH/CH000001/}. Compared to IntFOLD, the structure has implicitly less details and the user may change the representation only with a right mouse button click via JSMol settings.}
+    \label{fig:coach_prediction}
+\end{figure}
+
+\subsection{DeepSite}
+
+DeepSite\footnote{Available at \url{https://www.playmolecule.com/deepsite/}} is one of the newest tools for binding sites prediction. DeepSite is a part of PlayMolecule framework that aims at the visual representation of the protein structures and their interactions. DeepSite uses machine-learning based methods to precisely predict the binding sites, which makes the tool very fast \cite{10.1093/bioinformatics/btx350}. The waiting times are significantly slower and the prediction is available to the user after a few minutes. The user may enter the PDB structure ID, which is a lot more convenient way to describe the structure than by entering the entire PDB file. DeepSite utilizes the Mol* library for the results and is similar to PrankWeb in terms of the visual representation. On the other side, DeepSite provides the user only with a visualisation of the center of the binding site and does not provide any information about the residues that are involved in the binding directly in the web viewer. The structure is shown in a surface representation. An example prediction is shown in Figure \ref{fig:deepsite_prediction}. The pros of this tool are definitely the speed of the prediction and a above-average visual representation. On the other side, the user is provided with little information about the binding site and may be used for a rather quick overview of the potential binding sites.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/deepsite_prediction.png}
+    \caption{A DeepSite prediction for the \texttt{2SRC} structure available at \url{https://www.playmolecule.com/deepsite/job/BD2ED307}. The surface representation is shown in white, underlying cartoon representation is colorful. The binding site prediction is shown by a red sphere.}
+    \label{fig:deepsite_prediction}
+\end{figure}
 
 \xxx{todo}
