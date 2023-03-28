@@ -1,14 +1,16 @@
 \chapter{Introduction and background}
-\label{chap:refs}
+\label{chap:intro}
 
 In this chapter, we will discuss the basics of protein and ligand-binding sites problematic, later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself. The reader will also be briefly introduced to similar web-tools.
 
 \section{Introduction to molecular biology}
+\label{sec:mol_bio}
 
 \xxx{TODO}
 \xxx{mention keywords: protein, ligand, binding site, pocket, docking, conservation, prediction, structure, residues, sequence, amino acids}
 
 \section{P2Rank tool}
+\label{sec:p2rank}
 
 P2Rank allows its users to predict the ligand-binding sites for a given protein. In contrast to other projects, P2Rank was one of the first tools to employ machine learning for predicting the pockets. P2Rank outperforms most of the existing binding sites prediction tools \cite{krivak2018p2rank}. Most of the other tools include geometry-based, energetic-based, or template-based methods that are not as efficient and rather outdated. Moreover, P2Rank works as a standalone application and is fully automated, which makes the tool very intuitive and easy to use.
 
@@ -23,6 +25,7 @@ The following command would run P2Rank on the protein structure file \texttt{1fb
 The tool was written in Java and requires only the JRE\footnote{Java Runtime Environment.} to run. Additionally, the source codes are publicly available at GitHub\footnote{Source codes for P2Rank are available at \url{https://github.com/rdk/p2rank}.}. This allows the users to potentially modify the tool to their respective needs. 
 
 \section{PrankWeb architecture}
+\label{sec:prankweb_arch}
 
 PrankWeb consists of several components that cooperate together. Currently, the application is deployed via Docker\footnote{Docker is a virtualization tool providing a stable interface for isolating and running applications. More information available at \url{https://www.docker.com/}.} containers that are described in the \texttt{docker-compose.yml} file. The application consists of the following components:
 
@@ -95,6 +98,7 @@ All of the listed files are exposed via the REST API to the frontend. After post
 Prometheus is a tool for monitoring the Docker containers. It is not necessary for the proper application functionality, but is useful for debugging purposes. The Prometheus container is configured via the \texttt{prometheus/prometheus.yml} file. The interface is exposed at the \texttt{9090} port.
 
 \section{Similar web-tools}
+\label{sec:similar_web_tools}
 
 The main motivation for the creation of PrankWeb was to provide a web-based ligand binding site prediction tool that does employ the newest technologies not only for the prediction itself, but also for the web application. One of the goals of this thesis is to replace the outdated plugins for the structure, pockets and binding sites visualization to keep the application relevant and up-to-date.
 
