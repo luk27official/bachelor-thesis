@@ -1,24 +1,46 @@
 \chapter{Programming documentation}
 \label{chap:prog_docs}
 
-\xxx{TODO: add some introduction}
+This chapter will introduce the reader to the code changes made to the original PrankWeb interface. The first part will focus on the frontend, the second part will focus on the plug-ins.
 
 \section{Frontend}
 \label{sec:frontend}
 
-\subsection{Overview}
-\xxx{TODO: add a brief overview of the frontend including Webpack, React, Bootstrap, old plugins...}
+The frontend of PrankWeb works as a TypeScript application. TypeScript is transpiled to JavaScript and bundled using Webpack. The application uses React for rendering a panel containing a tool box, structure information and pocket data. Styles are provided by CSS files and SCSS Bootstrap. All packages used in PrankWeb are installed using the npm tool. This architecture was already present in the original interface.
+
+The former interface was based on the LiteMol library for visualizing the structure. LiteMol is no longer developed, so one of the goals was to replace this plug-in with a new, modern structure viewer from the same authors - MolStar. Not only have the visuals significantly improved, the overall performance of MolStar is also much better. \cite{10.1093/nar/gkab314}
+
+PrankWeb used a different library for rendering the 1D feature viewer. The original implementation used the Protael library for a simple visual representation of the pockets, binding sites and scores. This library is intended for creating customizable visualizations for a protein structure \cite{10.1093/bioinformatics/btv605}. Protael is an old plug-in and in the original implementation, it needed to be modified in a significant way to fit the needs of PrankWeb. The new implementation uses the RCSB Saguaro 1D Feature Viewer, which provides a more convenient way to display the pockets, binding sites and scores. \cite{10.1093/bioinformatics/btaa1012}
+
+\subsection{High-level overview}
+\label{subsec:frontend-overview}
+
+Firstly, let's describe the typical data flow between the frontend and backend. The user starts at the \texttt{index.js} page, where they enter either a protein structure file or a RCSB protein identifier. A request via REST API is then sent from the frontend to the backend workers. If there is a free worker, the job is immediately processed. If there are no free workers, the job is queued and processed as soon as a worker becomes available. The backend workers then process the job and create a result file (see \cref{subsec:executor-p2rank} for details). Right after the request, the user is redirected to the \texttt{analyze.ts} file. The frontend periodically fetches both the status file and the log file to display the current job progress. When the job is finished, the user is redirected to the \texttt{viewer.ts} file. The entrypoint to the viewer is the \texttt{renderProteinView} method, which will be covered later on. The viewer file is responsible for visualizing the structure, the pockets, binding sites and scores. The last step is to combine the plug-ins together, so that the user can interact with the structure and the data.
 
 \subsection{MolStar}
+\label{subsec:frontend-molstar}
+
+MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol and NGL libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly.
+
+After invoking the \texttt{renderProteinView} method, a MolStar viewer instance is created by calling the \texttt{createPluginUI} method from the library. An instance of \texttt{PluginUIContext} is returned. This instance is saved and used throughout the entire existence of the session. After the initialization, the main React component called \texttt{Application} is rendered for the first time. After mounting the component, the main visualization method \texttt{sendDataToPlugins} is called. This method is responsible for sending the prediction data for both plugins.
+
+Firstly, the program asks for the API endpoint URL which resolves to a structure file. This file is loaded into MolStar via the \texttt{loadStructureIntoMolstar} method. This method parses the structure based on the file format and creates all of the available representations, such as surface, cartoon and ball-and-stick. It also tries to show the water molecules and ligands.
+
+When the structure is successfully shown to the user, a prediction is fetched from the API. Then, the 1D viewer is initialized. The 1D viewer connects to the MolStar plugin via callbacks. When the user hovers over a residue in the 1D viewer, the residue is highlighted in the MolStar plugin as well. When the user clicks a residue (or a pocket block), then the specific residue is focused in the MolStar plugin. The 1D viewer calls the \texttt{highlightInViewerAuthId} and \texttt{highlightInViewerLabelIdWithoutFocus} methods. See \cref{subsec:frontend-saguaro} for more details about the code.
+
+\xxx{TODO: add description after initializing the RCSB viewer}
+\xxx{TODO: add some code pieces}
+\xxx{TODO: add pictures}
 
 \subsection{RCSB Saguaro 1D Feature Viewer}
+\label{subsec:frontend-saguaro}
 
 \subsection{React components}
+\label{subsec:frontend-react}
 
 \section{Plug-ins}
 \label{sec:plugins}
 
-\subsection{Overview}
 \xxx{TODO: add some plugin motivation}
 
 \subsection{Client-side plug-ins}

@@ -50,6 +50,7 @@ Each of the containers is defined by a respective \texttt{Dockerfile}. Some cont
 Now we will present the current Docker containers in more detail to get a broader knowledge of the architecture.
 
 \subsection{Gateway}
+\label{subsec:gateway}
 
 The gateway container is a reverse proxy that is responsible for routing the requests to the backend. In PrankWeb, we utilize the Nginx web server as a reverse proxy. The Nginx configuration file is located in the \texttt{gateway/nginx.conf} file. The server configuration includes not only the reverse proxy routes, but a mapping to the Flower and Prometheus services as well.
 
@@ -58,18 +59,22 @@ Moreover, \texttt{gateway/Dockerfile} is responsible for the installation of the
 The entire frontend is written in TypeScript, JavaScript, CSS, SCSS, and HTML.
 
 \subsection{RabbitMQ}
+\label{subsec:rabbitmq}
 
 RabbitMQ is a message broker that is used to provide communication between the web server and the backend workers, in our case Celery. RabbitMQ is configured via the \texttt{rabbitmq/rabbitmq/rabbitmq.conf} file. PrankWeb does not require a complex configuration of this service, although the service is still necessary for the communication.
 
 \subsection{Flower}
+\label{subsec:flower}
 
 Flower is a tool for monitoring the broker and Celery workers functionality. Flower container does not need any specific configuration, it is only necessary to correctly run it alongside the RabbitMQ container.
 
 \subsection{Web-server}
+\label{subsec:web-server}
 
 The web-server container is a WSGI server that is responsible for serving the web application. Currently, we employ the Gunicorn server. The second main part of this continer is Flask framework. The Flask application defines all of the REST API endpoints for interaction between the frontend and the backend. This application also defines a Celery client that is responsible for sending the tasks to the backend Celery workers based on the API calls.
 
 \subsection{Executor-P2Rank}
+\label{subsec:executor-p2rank}
 
 This container is responsible for creating the prediction via the P2Rank tool. P2Rank executor is written in Python and utilizes the Celery framework for the task management. Celery enables the server to use multiple threads and process the requests in parallel. The executor's Celery listener firstly receives a request for the prediction given a directory with a name of the structure. Subsequently, the executor prepares the necessary information for the P2Rank tool.
 
@@ -90,10 +95,12 @@ directory. The current hierarchy contains the following:
 All of the listed files are exposed via the REST API to the frontend. After posting a prediction request, the frontend periodically polls the \texttt{info.json} file to get the current status of the prediction. Meanwhile, the \texttt{log} file is continuously updated with the output of the P2Rank tool. The logfile is also shown in the frontend to provide the user with the current status of the prediction.
 
 \subsection{Executor-Docking}
+\label{subsec:executor-docking}
 
 \xxx{TODO - not implemented yet, but the idea is pretty much the same as for the P2Rank executor}
 
 \subsection{Prometheus}
+\label{subsec:prometheus}
 
 Prometheus is a tool for monitoring the Docker containers. It is not necessary for the proper application functionality, but is useful for debugging purposes. The Prometheus container is configured via the \texttt{prometheus/prometheus.yml} file. The interface is exposed at the \texttt{9090} port.
 
@@ -107,6 +114,7 @@ There are a few working web-tools that are able to predict binding sites for the
 We will cover a few of the existing web-tools to provide a better understanding of the current state of the art.
 
 \subsection{IntFOLD}
+\label{subsec:intfold}
 
 IntFOLD\footnote{Available at \url{https://www.reading.ac.uk/bioinf/IntFOLD/}.} is a tool that may be used for predicting protein tertiary structures alongside disordered protein regions and ligand binding sites. This tool utilizes the FunFOLD algorithm to create the predictions effectively \cite{10.1093/nar/gkz322}. IntFOLD appears to be still actively developed and is easily accessible to any potential user. The user interface is easy to use and requires only the protein sequence (FASTA) to be entered. On the other side, IntFOLD uses the JSMol library for visualising the protein binding sites. JSMol is more of a simple viewer with less options than the MolStar library used in PrankWeb. Both the visuals and the user interaction are limited. The user may modify the representation with a right mouse button click, but the interface is pretty complicated and non-intuitive. An example prediction is shown in Figure \ref{fig:intfold_prediction}. Like PrankWeb, IntFOLD also provides a download option for the prediction results for PyMOL. The prediction takes a long time to be computed, typically around 24 hours.
 
@@ -119,6 +127,7 @@ IntFOLD\footnote{Available at \url{https://www.reading.ac.uk/bioinf/IntFOLD/}.} 
 \end{figure}
 
 \subsection{COACH}
+\label{subsec:coach}
 
 COACH\footnote{Available at \url{https://seq2fun.dcmb.med.umich.edu/COACH/}} is a web-based tool designed specifically for binding sites prediction, like PrankWeb. COACH uses a combination of substructure-comparison (TM-Site) and sequence-alignment (S-Site) methods for the computations \cite{yang2013protein}. These methods are generally slower than the P2Rank tool, so the prediction once again is available to the user after a longer time, typically around 24 hours. This tool allows the user not only to enter a FASTA sequence, but also to upload or paste a PDB file. COACH allows the user to download the prediction results as well and does not focus on the web visualization that is very limited. An example prediction is shown in Figure \ref{fig:coach_prediction}.
 
@@ -130,6 +139,7 @@ COACH\footnote{Available at \url{https://seq2fun.dcmb.med.umich.edu/COACH/}} is 
 \end{figure}
 
 \subsection{DeepSite}
+\label{subsec:deepsite}
 
 DeepSite\footnote{Available at \url{https://www.playmolecule.com/deepsite/}} is one of the newest tools for binding sites prediction. DeepSite is a part of PlayMolecule framework that aims at the visual representation of the protein structures and their interactions. DeepSite uses machine-learning based methods to precisely predict the binding sites, which makes the tool very fast \cite{10.1093/bioinformatics/btx350}. The waiting times are significantly slower and the prediction is available to the user after a few minutes. The user may enter the PDB structure ID, which is a lot more convenient way to describe the structure than by entering the entire PDB file. DeepSite utilizes the MolStar library for the results and is similar to PrankWeb in terms of the visual representation. On the other side, DeepSite provides the user only with a visualisation of the center of the binding site and does not provide any information about the residues that are involved in the binding directly in the web viewer. The structure is shown in a surface representation. An example prediction is shown in Figure \ref{fig:deepsite_prediction}. The pros of this tool are definitely the speed of the prediction and a above-average visual representation. On the other side, the user is provided with little information about the binding site and may be used for a rather quick overview of the potential binding sites.
 
