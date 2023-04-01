@@ -22,7 +22,14 @@ Moving onto the visualization logic to the \texttt{viewer} subfolder, the user s
 \subsection{MolStar}
 \label{subsec:frontend-molstar}
 
-MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol and NGL libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly.
+MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol and NGL libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly. An example of the visualization is shown in \cref{fig:molstar}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\textwidth]{img/molstar_2src.png}
+    \caption{A screenshot of the MolStar viewer for the \texttt{2SRC} structure. The structure is shown in cartoon representation and is colored by the conservation score. The pockets are shown in the surface representation.}
+    \label{fig:molstar}
+\end{figure}
 
 After invoking the \texttt{renderProteinView} method, a MolStar viewer instance is created by calling the \texttt{createPluginUI} method from the library. An instance of \texttt{PluginUIContext} is returned. This instance is saved and used throughout the entire existence of the session. After the initialization, the main React component called \texttt{Application} is rendered for the first time. After mounting the component, the main visualization method \texttt{sendDataToPlugins} is called. This method from \texttt{data-loader.ts} is responsible for sending the prediction data for both plugins. Most of the code related to MolStar is located in the \texttt{molstar-visualise.ts} file.
 
@@ -58,14 +65,20 @@ In the end, we will show a brief code structure of the \texttt{molstar-visualise
     A slightly edited version of a declaration file \texttt{molstar-visualise.d.ts}.
 }]{code/molstar-visualise.d.ts}
 
-\xxx{TODO: add pictures}
 
 \subsection{RCSB Saguaro 1D Feature Viewer}
 \label{subsec:frontend-saguaro}
 
 Alongside to the MolStar plugin, we use the RCSB Saguaro 1D Feature Viewer to display the pockets, actual binding sites and scores in a simple view mapped to the residues. This plugin is designed to easily identify multiple interactions on a single residue.
 
-The RCSB Saguaro 1D Feature Viewer is a TypeScript library for visualizing protein features in a 1D view. The code is available on GitHub\footnote{\url{https://github.com/rcsb/rcsb-saguaro}}. Documentation is available and the usage is simple, but it is important to keep in mind that the library is still under active development and the interface may change in the future.
+The RCSB Saguaro 1D Feature Viewer is a TypeScript library for visualizing protein features in a 1D view. An example usage is shown in \cref{fig:1d-viewer}. The code is available on GitHub\footnote{\url{https://github.com/rcsb/rcsb-saguaro}}. Documentation is available and the usage is simple, but it is important to keep in mind that the library is still under active development and the interface may change in the future.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{img/rcsb_2src.pdf}
+    \caption{The RCSB Saguaro 1D Feature Viewer for the \texttt{2SRC} structure.}
+    \label{fig:1d-viewer}
+\end{figure}
 
 Most of the methods are defined in the \texttt{rcsb-visualise.ts} file. In our case, as described in \cref{subsec:frontend-molstar}, the 1D viewer gets initialized by the \texttt{sendDataToPlugins} method. This calls the \texttt{initRcsb} method which prepares all of the data for the plug-in.
 
@@ -83,10 +96,38 @@ Similarly to MolStar, let's have a look at the \texttt{rcsb-visualise.ts} file s
     A slightly edited version of a declaration file \texttt{rcsb-visualise.d.ts}.
 }]{code/rcsb-visualise.d.ts}
 
-\xxx{TODO: add pictures}
 
 \subsection{React components}
 \label{subsec:frontend-react}
+
+This section will describe the React components that are related to the structure visualization. Most of the components were already present in the previous version of PrankWeb, but there was a need to refactor them to make them more modular and reusable, as well as to add new features and improve the user experience.
+
+The application uses the following components:
+
+\begin{itemize}
+    \item \textbf{Application} - the main component of the app, responsible for the overall structure of the page including the viewers
+    \item \textbf{ToolsBox} - a component containing tools for changing the structure representation, coloring residues, hiding low-confidence residues and downloading data
+    \item \textbf{StructureInformation} - a component containing the structure name
+    \item \textbf{PocketList} - a component containing a list of all pockets with their scores and a button for hiding/showing all of them
+    \item \textbf{Pocket} - a component containing a single pocket with its information and buttons for hiding/showing the pocket, highlighting the pocket and opening a dialog with the pocket details
+    \item \textbf{PocketDetails} - a component defining the information of a Pocket component
+    \item \textbf{PocketProperty} - a component visualizing a single property of a Pocket component
+\end{itemize}
+
+Other components will be covered in \cref{sec:plugins} as they are related to the plug-ins.
+
+All React components are defined in their own files in the \texttt{components} subdirectory. The components extend the \texttt{React.Component} class to utilize the props and state features of React. The components invoke the responsible RCSB and MolStar methods on various value changes, clicks on buttons and other events. Some of the props get passed from the parent component to the children, which allows an easy communication between them and enforces best practices and minimizes code duplication. The components create a tree that is visualized in \cref{fig:react-molstar}.
+
+The components are styled as Bootstrap cards and thus they are responsive. Although we expect the user to use PrankWeb mainly on a desktop computer, it is necessary to provide a good first experience when encountering the application on a smaller screen.
+
+\xxx{TODO: maybe some more details?}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\textwidth]{img/react_molstar.pdf}
+    \caption{The React component tree showing only the components that are not related to the plug-ins.}
+    \label{fig:react-molstar}
+\end{figure}
 
 \section{Plug-ins}
 \label{sec:plugins}
