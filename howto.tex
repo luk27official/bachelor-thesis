@@ -1,49 +1,43 @@
-\chapter{Using CoolThesisSoftware}
+\chapter{Attachments}
 
-\xxx{TODO: maybe add abbreviations to the end?}
-\xxx{TODO: add github link}
+\section{Source codes}
 \xxx{TODO: add a brief recap of the source codes}
 
-Use this appendix to tell the readers (specifically the reviewer) how to use your software. A very reduced example follows; expand as necessary. Description of the program usage (e.g., how to process some example data) should be included as well.
+\section{GitHub}
+\xxx{TODO: add github link}
 
-To compile and run the software, you need dependencies XXX and YYY and a C compiler. On Debian-based Linux systems (such as Ubuntu), you may install these dependencies with APT:
-\begin{Verbatim}
-apt-get install \
-  libsuperdependency-dev \
-  libanotherdependency-dev \
-  build-essential
-\end{Verbatim}
+\section{Abbreviations}
+\xxx{TODO: maybe add abbreviations to the end?}
 
-To unpack and compile the software, proceed as follows:
-\begin{Verbatim}
-unzip coolsoft.zip
-cd coolsoft
-./configure
-make
-\end{Verbatim}
+\section{Pocket detail designs}
+\label{sec:pocket_detail_designs}
 
-The program can be used as a C++ library, the simplest use is demonstrated in \cref{lst:ex}. A demonstration program that processes demonstration data is available in directory \verb|demo/|, you can run the program on a demonstration dataset as follows:
-\begin{Verbatim}
-cd demo/
-./bin/cool_process_data data/demo1
-\end{Verbatim}
+This section contains all pocket detail designs that were considered for displaying more information about a pocket. In the end, the \cref{fig:dialog-4} was chosen. For more information refer to \cref{sec:plugins}.
 
-After the program starts, control the data avenger with standard \verb-WSAD- controls.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{img/dialog_1-svg.pdf}
+    \caption{The first option for displaying detailed pocket information. The tools box stays on the top, details of the chosen pocket are displayed in an extended box below. Other pockets are hidden.}
+    \label{fig:dialog-1}
+\end{figure}
 
-\begin{listing}
-\begin{lstlisting}
-#include <CoolSoft.h>
-#include <iostream>
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\linewidth]{img/dialog_2-svg.pdf}
+	\caption{The second option for displaying detailed pocket information. The tools box is hidden as well as other pockets, details of the chosen pocket cover the whole space assigned for the pockets.}
+	\label{fig:dialog-2}
+\end{figure}
 
-int main() {
-	int i;
-	if(i = cool::ProcessAllData()) // returns 0 on error
-		std::cout << i << std::endl;
-	else
-		std::cerr << "error!" << std::endl;
-	return 0;
-}
-\end{lstlisting}
-\caption{Example program.}
-\label{lst:ex}
-\end{listing}
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\linewidth]{img/dialog_3-svg.pdf}
+	\caption{The third option for displaying detailed pocket information. The tools box is hidden entirely, details of the chosen pocket are displayed in a bigger box on the top. Below this box, other pockets are displayed.}
+	\label{fig:dialog-3}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\linewidth]{img/dialog_4-svg.pdf}
+	\caption{The fourth (and chosen) option for displaying detailed pocket information. Original design is kept, details of the chosen pocket are shown in a draggable dialog window somewhere on the screen.}
+	\label{fig:dialog-4}
+\end{figure}

@@ -116,7 +116,7 @@ The application uses the following components:
 
 Other components will be covered in \cref{sec:plugins} as they are related to the plug-ins.
 
-All React components are defined in their own files in the \texttt{components} subdirectory. The components extend the \texttt{React.Component} class to utilize the props and state features of React. The components invoke the responsible RCSB and MolStar methods on various value changes, clicks on buttons and other events. Some of the props get passed from the parent component to the children, which allows an easy communication between them and enforces best practices and minimizes code duplication. The components create a tree that is visualized in \cref{fig:react-molstar}.
+All React components are defined in their own files in the \texttt{components} subdirectory. The components extend the \texttt{React.Component} class to utilize the props and state features of React. The components invoke the responsible RCSB and MolStar methods on various value changes, clicks on buttons and other events. Some of the props get passed from the parent component to the children, which allows an easy communication between them and enforces best practices and minimizes code duplication. Some of the components have state variables as well that mostly indicate their current visibility. The components create a tree that is visualized in \cref{fig:react-molstar}.
 
 The components are styled as Bootstrap cards and thus they are responsive. Although we expect the user to use PrankWeb mainly on a desktop computer, it is necessary to provide a good first experience when encountering the application on a smaller screen.
 
@@ -136,10 +136,35 @@ The second goal of this thesis is to introduce a possibility to extend the curre
 
 The PrankWeb interface for both of the tasks works as a set of React components that are modular, so new plug-ins may be introduced in an easy way without modifying much of the current code.
 
+For an easy access to plug-ins, we have created a possibility to view the pocket details not only directly in the pocket list, but in a draggable dialog as well. This dialog is defined in the \texttt{DraggableDialog} and \texttt{PocketDialogDetails} classes that provide the implementation. The user may open multiple dialogs at once as well as drag them around the screen. The dialogs allow interaction behind them, so the user may still manipulate with both of the viewers.
+
+This decision was discussed more and multiple designs were proposed and tested. All of the possible variants are listed in \cref{sec:pocket_detail_designs}. The final decision was made based on the fact that a vast majority of users is expected to use a big-screen device, so to keep the original usage easy and intuitive, we decided to keep the original design. One downside of this implementation is that the dialogs are not intended to be used on mobile devices. In other words, the dialogs are not available for small screens which makes this section irrelevant for those devices. On the other side, we believe that this is a reasonable trade-off.
+
 In the following subsections, we will introduce the general plug-in interface and the implemented plug-ins.
 
 \subsection{Client-side plug-ins}
+
+The main intention of client-side plug-ins is to create a possibility to enable simple post-processing from the prediction data directly in the application. The tasks computed on client-side stay in the current session. 
+
+Currently, the client-side plug-ins are defined in a \texttt{PocketDialogDetails} component as they are dialog-specific. A new interface for these plug-ins was created in the \texttt{PocketClientTask} component. Let's have a look at the interface.
+
+\lstinputlisting[language=JavaScript,caption={
+    An edited version of a \texttt{pocket-client-task.tsx} component.
+}]{code/pocket-client-task.tsx}
+
+Some of the props and state variables are self-explanatory, some of them are passed from the parent component. We will focus on the client-side specific props and state variables that define their behavior.
+
+Firstly, let's take a look at the \texttt{taskType} prop. This prop defines the type of the task that is defined in the \texttt{ClientTaskType} enum. This enables a possible behavior difference of the client-side plug-ins based on their type. Next prop is a method called \texttt{compute}. This is the key method of the plug-in that provides the actual post-processing of the prediction data. The behavior is defined by the parent component. In the plug-in definition, the \texttt{compute} method is called. We expect this method to return a promise containing data conforming to the \texttt{ClientTaskData} interface. After receiving the result, the result needs to be rendered. During this entire process, state variables \texttt{taskData}, \texttt{computed} and \texttt{loading} are used to indicate the current computation progress.
+
+Originally, one implementation for showing the result was created, but to provide a more generic approach to the problem, a second method was introduced to the props - the \texttt{renderOnComplete} method. This method takes the computed data as a parameter and returns a JSX component that renders the data inside the original dialog.
+
+Currently, the client-side plug-ins are defined in the \texttt{tasks} subdirectory. The actual implementations are \texttt{.tsx} files and should contain both of the methods for the computation and rendering to keep the code clean.
+
+As an example of a client-side plug-in, we have implemented a plug-in that computes the expected volume of the pocket. 
+
 \xxx{TODO: add description}
 
 \subsection{Server-side plug-ins}
 \xxx{TODO: add description}
+
+\xxx{TODO: mention the new tasks list}
