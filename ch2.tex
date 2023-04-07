@@ -160,9 +160,9 @@ Originally, one implementation for showing the result was created, but to provid
 
 Currently, the client-side plug-ins are defined in the \texttt{tasks} subdirectory. The actual implementations are \texttt{.tsx} files and should contain both of the methods for the computation and rendering to keep the code clean.
 
-As an example of a client-side plug-in, we have implemented a plug-in that computes the expected volume of the pocket. 
+As an example of a client-side plug-in, we have implemented a plug-in that computes the expected volume of the pocket. For this purpose, we have created a \texttt{tasks/client-atoms-volume.tsx} file that contains \texttt{computePocketVolume} and \texttt{renderOnTaskVolumeCompleted} methods that conform to the \texttt{compute} and \texttt{renderOnComplete} props of the \texttt{PocketClientTask} component. In this post-processing, we are using a convex hull algorithm to get coordinates of the hull vertices. Then, we use a simple formula to compute the volume of the convex hull using the coordinates of the vertices based on triangulation of the hull \cite{zhang2001efficient}. The result is then rendered in the dialog as a simple number. This implementation saves the computed results in a hashmap directly in the implementation file. This is not the most efficient way to store the results, on the other hand, it is a simple solution that is sufficient for this use case.
 
-\xxx{TODO: add description}
+Implementing a new client-side plug-in is covered in \cref{sec:developer}.
 
 \subsection{Server-side plug-ins}
 \xxx{TODO: add description}
