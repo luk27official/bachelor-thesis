@@ -1,14 +1,46 @@
 \chapter{Introduction and background}
 \label{chap:intro}
 
-In this chapter, we will discuss the basics of protein and ligand-binding sites problematic, later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself. The reader will also be briefly introduced to similar web-tools.
+PrankWeb is a web-based tool for predicting the ligand-binding sites for a given protein structure. PrankWeb uses a tool called P2Rank for the prediction of the binding sites on the backend. In this thesis, an improved version of PrankWeb is introduced, with an emphasis on modernization of the frontend and creating a potential for implementing post-processing features, such as docking.
+
+In this chapter, we will discuss the basics of protein and ligand-binding sites problematic to get briefly acquainted with the topic. A short intro to the used data formats will follow. Later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself to get a better understanding of the project. The reader will also be briefly introduced to similar web-tools for ligand-binding sites prediction.
 
 \section{Introduction to molecular biology}
 \label{sec:mol_bio}
 
-\xxx{TODO: fix passive voice?}
-\xxx{TODO: mention keywords: protein, ligand, binding site, pocket, docking, conservation, prediction, structure, residues, sequence, amino acids}
-\xxx{TODO: add some format descriptions}
+\xxx{TODO: mention keywords: protein, ligand, binding site, pocket, docking, conservation, prediction, structure, residues, sequence, amino acids, nucleotid}
+
+\section{Used data formats}
+\label{sec:used_data_formats}
+
+PrankWeb uses several data formats for the input and output of data throughout the application. In this section, we will briefly introduce the used data formats.
+
+\xxx{TODO: maybe add examples of the data formats?}
+
+\subsection{JSON}
+\label{subsec:json}
+
+JSON (JavaScript Object Notation) is a data format used for storing JavaScript objects. The syntax of this format is simple and the main advantages of this format are its readability and simple usage on the frontend. The main idea of JSON is to store its data in key-value pairs. The keys are strings and the actual values may be in any format such as string, number, boolean, array, or another object.
+
+\subsection{PDB}
+\label{subsec:PDB}
+
+PDB (Protein Data Bank format) is a file format that is used for describing three-dimensional protein structures. This format stores information about the atom coordinates and their connections \cite{bernstein1977protein}. Alongside this information, the PDB format may contain additional metadata as well. It is still used for many protein structures, but the format size is limited and thus it does not support large structures, so in some cases it is replaced by the PDBx/mmCIF format (\cref{subsec:PDBx_mmCIF}) \cite{adams2019announcing}. A large database of PDB files for protein structures is called RCSB PDB\footnote{PDB database is available at \url{https://www.rcsb.org/}.}.
+
+\subsection{PDBx/mmCIF}
+\label{subsec:PDBx_mmCIF}
+
+PDBx/mmCIF (Protein Data Bank extended / macromolecular Crystallographic Information File) is an extension to the CIF format that stores crystallographic data. It was developed to overcome the limitations of the existing formats \cite{bourne199730}.
+
+\subsection{FASTA}
+\label{subsec:FASTA}
+
+FASTA (FAST-All) is a text format that describes either a nucleotide sequence, or a protein sequence. In our case, this format is used in the second sense. This format is simple as it only contains a brief description of the protein on the first line starting by the ">" character and the sequence itself on the next line. The sequence is represented by a string of letters that represent the amino acids. This format was created for the FASTA program that was used for sequence alignment \cite{lipman1985rapid}.
+
+\subsection{CSV}
+\label{subsec:CSV}
+
+CSV (Comma-Separated Values) is a text format that is used for storing tabular data in plain text. The first line of the file contains the column names and the following lines contain the actual data. The data are separated either by commas or semicolons. This format is simple and easy to use, but it does not support complex data types such as arrays or objects.
 
 \section{P2Rank tool}
 \label{sec:p2rank}
