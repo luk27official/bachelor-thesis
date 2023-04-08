@@ -143,13 +143,14 @@ This decision was discussed more and multiple designs were proposed and tested. 
 In the following subsections, we will introduce the general plug-in interface and the implemented plug-ins.
 
 \subsection{Client-side plug-ins}
+\label{subsec:client-side-plugins}
 
 The main intention of client-side plug-ins is to create a possibility to enable simple post-processing from the prediction data directly in the application. The tasks computed on client-side stay in the current session. 
 
 Currently, the client-side plug-ins are defined in a \texttt{PocketDialogDetails} component as they are dialog-specific. A new interface for these plug-ins was created in the \texttt{PocketClientTask} component. Let's have a look at the interface.
 
 \lstinputlisting[language=JavaScript,caption={
-    An edited version of a \texttt{pocket-client-task.tsx} component.
+    An edited version of the \texttt{pocket-client-task.tsx} component.
 }]{code/pocket-client-task.tsx}
 
 Some of the props and state variables are self-explanatory, some of them are passed from the parent component. We will focus on the client-side specific props and state variables that define their behavior.
@@ -165,6 +166,40 @@ As an example of a client-side plug-in, we have implemented a plug-in that compu
 Implementing a new client-side plug-in is covered in \cref{sec:developer}.
 
 \subsection{Server-side plug-ins}
-\xxx{TODO: add description}
+\label{subsec:server-side-plugins}
 
-\xxx{TODO: mention the new tasks list}
+Server-side plug-ins create an opportunity to perform more complex post-processing that takes more time to compute. Our intention was to create a possibility to use third-party software for the post-processing. Server-side tasks are meant to be parametrized by the user in some way.
+
+The plug-ins are defined as a Docker containers in a similar way as the P2Rank executor (as mentioned in \cref{sec:prankweb_arch}).
+
+There are a few steps that have to be done to implement a new server-side plug-in. First, some API endpoints for the plug-in as well as the folder and file structure need to be defined. This is done in the \texttt{web-server} folder in Flask. Usually, it is expected that Flask will prepare the needed directories and files for the actual Docker container. For this process, it is typical to create a new Python class to contain all of this logic.
+
+Then, in the Celery client configuration file in Flask, new bindings are created for the new plug-in. This includes creating a new Celery queue as well as introducing a new task that gets executed on the backend identified by its name.
+
+After completing all of the Flask tasks, a new Docker container has to be created. The container should install Python with Celery and any other tools needed for the post-processing. It is expected that a new \texttt{Dockerfile} will be created for this purpose. After setting up the container, Celery bindings have to be created in a similar way as in Flask. Be careful that the Celery task name has to be the same as in Flask. Then, any method may be called from this Celery binding. This means that the actual post-processing may be finally done here. The first option is to do this in Python entirely, but it is also possible to call any other tool from the container. The only requirement is to have everything set up properly. 
+
+The Docker container is also responsible for saving the results of the post-processing. This means that either some of the Python files or the third-party tool itself has to save the results in the correct location. Keep in mind that the location is very likely to depend on the API endpoints defined in Flask. Now, the Docker container is ready to be used.
+
+It is highly recommended to include the newly created container into the Docker-compose file. This makes the deployment easy and allows simpler testing of the new plug-in\footnote{With Docker-compose, it is possible to restart just one of the containers, which makes the debugging faster.}.
+
+After completing all of the steps, the new plug-in should be ready to be used. The only thing left is to include the plug-in to the frontend. For the frontend interaction, a new React component was introduced.
+
+\texttt{PocketServerParametrizedTask} is meant to be used for the server-side plug-ins that require some parameters to be set by the user. This component is used in \texttt{PocketDialogDetails} similarly to client plug-ins (more about dialog in \cref{subsec:client-side-plugins}). Let's have a look at the server plug-in component.
+
+\lstinputlisting[language=JavaScript,caption={
+    An edited version of the \texttt{pocket-server-parametrized-task.tsx} component.
+}]{code/pocket-server-parametrized-task.tsx}
+
+The component works similarly to the client-side plug-in component. There are two methods that are responsible for the computation and rendering of the results. One of the differences is that these two methods are now identifiable by a hash that has to be computed from the parameters before the actual computation. This hash is not only used for frontend identification, but also for the backend. This technique allows us to differ between multiple tasks of the same type with different parameters.
+
+There are more state variables as well. \texttt{modalOpen} and \texttt{formData} were introduced for receiving an input from the user, the current implementation opens a modal dialog with a text area. The \texttt{hash} is then computed from the input stored in the \texttt{formData} variable.
+
+As the task results are persistent on the server, a new variable called \texttt{serverTasks} was introduced in the main component of the app. This component then periodically checks for all computed tasks for the given structure. The objects in this array are mutable and are modified for the purpose of the frontend rendering, so only the response data for tasks completed in this session are saved.
+
+This allows us to render the hashes of the tasks that were computed both in this session and in previous ones. For this purpose, a new component called \texttt{TaskList} was introduced to display the list of tasks. \xxx{TODO: maybe we won't use this component in the end, so mention that its just available but not used}
+
+One last change was made to the \texttt{PocketDialogDetails} component. A new component \texttt{PocketRunningTasks} was created to display a list of tasks that are either running or completed in this session. This is done to make sure that the task results are available to the user in case the dialog is closed and reopened. Moreover, this allows the user to enter multiple parameters for the same task and see the results for all of them.
+
+\xxx{TODO: add an example of a server-side plug-in - docking, as soon as its completed}
+
+\xxx{TODO: consider whether it is a good idea to describe the docker side even more and include some examples?}
