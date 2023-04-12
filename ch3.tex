@@ -18,6 +18,7 @@ After installing Docker, the PrankWeb repository needs to be cloned, preferrably
 \begin{enumerate}
     \item Create a directory for the PrankWeb repository and navigate to it.
     \item Clone the repository using the following command:
+    \xxx{todo: remove the green font}
     \begin{lstlisting}
         git clone https://github.com/cusbg/prankweb.git .
     \end{lstlisting}
@@ -55,7 +56,43 @@ Although the main deployment process will not change much, the best way to get t
 \subsection{Local deployment}
 \label{subsec:local_deployment}
 
-\xxx{TODO: how to deploy via Docker}
+The local deployment is not recommended, as the support for some components is limited.
+
+The only component that is developed better locally is the frontend (when not considering backend API changes). To run the frontend locally, firstly clone the repository as described in \ref{subsec:docker_deployment}. Then, navigate to the \texttt{frontend} directory.
+
+It is recommended to have a look at the \texttt{server/configuration.js} file to set up the proxy server that will serve potential calls. The proxy service should be running, it is possible to use the default PrankWeb website at \url{https://prankweb.cz}.
+
+This is the default configuration:
+\begin{lstlisting}
+    // This configuration is used only in develop mode.
+    module.exports = {
+        // Port used to run-develop instance.
+        "port": 8075,
+        // Use this to server data from files. Thus, you can develop
+        // frontend without the need to run another component.
+        //"proxy-directory": "../../data/database/",
+        // Use the option bellow to proxy commands to task runner instance.
+        // This allows you to run tasks or connect to existing instance (https://prankweb.cz).
+        "proxy-service": "https://prankweb.cz",
+    }
+\end{lstlisting}
+
+After setting up the proxy server, the frontend npm modules need to be installed. This can be done using the following command:
+\begin{lstlisting}
+    npm ci
+\end{lstlisting}
+
+Then, it is possible to run the frontend using the following command:
+\begin{lstlisting}
+    npm run dev
+\end{lstlisting}
+
+The frontend is now accessible at \url{http://localhost:8075/} (with the port specified in the configuration file).
+
+Some of the tools from the executors like P2Rank may work from the command line as used in the Python scripts or Dockerfiles, for more information refer to those.
+
+Official documentation for the local deployment is available at \url{https://github.com/cusbg/p2rank-framework/wiki/PrankWeb-deploy-for-development}.
+
 
 \section{Regular user}
 \label{sec:regular_user}
