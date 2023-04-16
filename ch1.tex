@@ -1,7 +1,7 @@
 \chapter{Introduction and background}
 \label{chap:intro}
 
-PrankWeb is a web-based tool for predicting the ligand-binding sites for a given protein structure. PrankWeb uses a tool called P2Rank for the prediction of the binding sites on the backend. In this thesis, an improved version of PrankWeb is introduced, with an emphasis on modernization of the frontend and creating a potential for implementing post-processing features, such as docking.
+PrankWeb is a web-based tool for predicting ligand-binding sites for a given protein structure. PrankWeb uses a tool called P2Rank for the prediction of binding sites on the backend. In this thesis, an improved version of PrankWeb is introduced, with an emphasis on modernization of the frontend and creating a potential for implementing post-processing features, such as docking.
 
 In this chapter, we will discuss the basics of protein and ligand-binding sites problematic to get briefly acquainted with the topic. A short intro to the used data formats will follow. Later in this chapter will we cover the current PrankWeb architecture and the P2Rank tool itself to get a better understanding of the project. The reader will also be briefly introduced to similar web-tools for ligand-binding sites prediction.
 
@@ -13,7 +13,7 @@ In this section, we will briefly introduce the basics of molecular biology. We w
 \subsection{Amino acids and proteins}
 \label{subsec:amino_acids}
 
-\textbf{Amino acids} are in general molecules containing an amino group (-NH$_2$) and a carboxyl group (-COOH). Although here are hundreds of known amino acids, 20 of them provide the key to the structure of thousands of different proteins. In this thesis, we will focus on the 20 amino acids that are used in the protein structures. Amino acids are the building blocks for diverse products as enzymes, hormones, antibodies, muscle fibers, transporters, and many more. Amino acids may be recognized by their R groups. \cite{nelson2008lehninger}
+\textbf{Amino acids} are in general molecules containing an amino group (-NH$_2$) and a carboxyl group (-COOH). Although here are hundreds of known amino acids, 20 of them provide the key to the structure of thousands of different proteins. In this thesis, we will focus on the 20 amino acids that are used in the protein structures. Amino acids are the building blocks for diverse products as enzymes, hormones, antibodies, muscle fibers, transporters, and many more. Amino acids may be recognized by their R groups.
 
 \textbf{Proteins} are polymers consisting of amino acids. Each of the so-called \textbf{amino-acid residues} is connected to its neighbor by a covalent bond. Proteins are occuring in all cells and all parts of the cells. Proteins are the molecular instruments through which genetic information is expressed. Cells may produce proteins with substantially different properties and activities just by joining them in a different \textbf{sequence} or combination. The sequence of amino acids in a protein is called its \textbf{primary structure}. \cite{nelson2008lehninger}
 
