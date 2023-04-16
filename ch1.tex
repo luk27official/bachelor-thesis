@@ -15,7 +15,9 @@ In this section, we will briefly introduce the basics of molecular biology. We w
 
 \textbf{Amino acids} are in general molecules containing an amino group (-NH$_2$) and a carboxyl group (-COOH). Although here are hundreds of known amino acids, 20 of them provide the key to the structure of thousands of different proteins. In this thesis, we will focus on the 20 amino acids that are used in the protein structures. Amino acids are the building blocks for diverse products as enzymes, hormones, antibodies, muscle fibers, transporters, and many more. Amino acids may be recognized by their R groups.
 
-\textbf{Proteins} are polymers consisting of amino acids. Each of the so-called \textbf{amino-acid residues} is connected to its neighbor by a covalent bond. Proteins are occuring in all cells and all parts of the cells. Proteins are the molecular instruments through which genetic information is expressed. Cells may produce proteins with substantially different properties and activities just by joining them in a different \textbf{sequence} or combination. The sequence of amino acids in a protein is called its \textbf{primary structure}. \cite{nelson2008lehninger}
+\textbf{Proteins} are polymers consisting of amino acids. Each of the so-called \textbf{amino-acid residues} is connected to its neighbor by a covalent bond. The connected amino acids form a \textbf{chain}. Proteins are occuring in all cells and all parts of the cells. Proteins are the molecular instruments through which genetic information is expressed. Cells may produce proteins with substantially different properties and activities just by joining them in a different \textbf{sequence} or combination. The 3D protein representation based off a sequence of the protein's amino acids is called its \textbf{primary structure}. \cite{nelson2008lehninger}
+
+Billions of proteins are known by their sequence, but only a small fraction of them are known by their structure. The structures are determined mostly by experiments, we call these structures \textbf{experimental}. Despite the effort to determine the structures, the vast majority of actual protein structures remains unknown. A neural network called AlphaFold allows to predict the structure of a protein based on its sequence by assigning a probability to each amino acid in the sequence (called pLDDT). We refer to these structures as \textbf{predicted}. \cite{jumper2021highly}
 
 \subsection{Protein functions}
 \label{subsec:protein_functions}
@@ -27,8 +29,6 @@ One ligand binds on a site of the protein. This is called the \textbf{(ligand-)b
 In PrankWeb, the main focus is to create a \textbf{prediction} of the potential locations and interacting residues of ligand-binding sites for a given protein structure. These predictions may or may not be based on \textbf{conservation} score of the residues. Conservation score is a measure of how similar the residues are in different protein structures.
 
 Bounding a ligand to a binding site is called \textbf{docking}. The docking is a complex process that involves consideration of all the interactions between the ligand and the binding site. \cite{sulimov2019advances}
-
-\xxx{TODO: add predicted structures from AlphaFold}
 
 \xxx{TODO: maybe add some pictures}
 
