@@ -6,16 +6,23 @@ This chapter will introduce the reader to the code changes made to the original 
 \section{Frontend}
 \label{sec:frontend}
 
-The frontend of PrankWeb works as a TypeScript application. TypeScript is transpiled to JavaScript and bundled using Webpack. The application uses React for rendering a panel containing a tool box, structure information and pocket data. Styles are provided by CSS files and SCSS Bootstrap. All packages used in PrankWeb are installed using the npm tool. This architecture was already present in the original interface.
+The frontend of PrankWeb works as a TypeScript application. TypeScript is transpiled to JavaScript and bundled using Webpack. The application uses React for rendering a panel containing a tool box (see \cref{fig:toolbox}), structure information and pocket data. Styles are provided by CSS files and SCSS Bootstrap. All packages used in PrankWeb are installed using the npm tool. This architecture was already present in the original interface.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.4\linewidth]{img/toolsbox.pdf}
+    \caption{The tool box component.}
+    \label{fig:toolbox}
+\end{figure}
 
 The former interface was based on the LiteMol library for visualizing the structure. LiteMol is no longer developed, so one of the goals was to replace this plug-in with a new, modern structure viewer from the same authors - MolStar. Not only have the visuals significantly improved, the overall performance of MolStar is also much better. \cite{10.1093/nar/gkab314}
 
-PrankWeb used a different library for rendering the 1D feature viewer. The original implementation used the Protael library for a simple visual representation of the pockets, binding sites and scores. This library is intended for creating customizable visualizations for a protein structure \cite{10.1093/bioinformatics/btv605}. Protael is an old plug-in and in the original implementation, it needed to be modified in a significant way to fit the needs of PrankWeb. The new implementation uses the RCSB Saguaro 1D Feature Viewer, which provides a more convenient way to display the pockets, binding sites and scores. \cite{10.1093/bioinformatics/btaa1012}
+Before the current change, PrankWeb used a different library for rendering the 1D sequence visualization. The original implementation used the Protael library for a simple visual representation of the pockets, binding sites and scores. This library is intended for creating customizable visualizations for a protein structure \cite{10.1093/bioinformatics/btv605}. Protael is an old plug-in and in the original implementation, it needed to be modified in a significant way to fit the needs of PrankWeb. The new implementation presented in this thesis uses the RCSB Saguaro 1D Feature Viewer, which provides a more convenient way to display the pockets, binding sites and scores. \cite{10.1093/bioinformatics/btaa1012}
 
 \subsection{High-level overview}
 \label{subsec:frontend-overview}
 
-Firstly, let's describe the typical data flow between the frontend and backend. Assuming that this section works with the \texttt{frontend} folder of the repository, this folder contains all of the frontend logic including plug-in configuration files for Webpack and static assets. The static assets are located in the \texttt{public} subfolder. Those include some JavaScript libraries (jQuery), CSS files and static images. 
+Firstly, let's describe the typical data flow between the frontend and backend. Assuming that this section works with the \texttt{frontend} folder of the repository, this folder contains all of the frontend logic including plug-in configuration files for Webpack and static assets. The static assets are located in the \texttt{public} subfolder. Those include several libraries (such as jQuery), CSS files and static images.
 
 Moving onto the visualization logic to the \texttt{viewer} subfolder, the user starts at the \texttt{index.js} page, where they enter either a protein structure file or a RCSB protein identifier. A request via REST API is then sent from the frontend to the backend workers. If there is a free worker, the job is immediately processed. If there are no free workers, the job is queued and processed as soon as a worker becomes available. The backend workers then process the job and create a result file (see \cref{subsec:executor-p2rank} for details). Right after the request, the user is redirected to the \texttt{analyze.ts} file. The frontend periodically fetches both the status file and the log file to display the current job progress. When the job is finished, the user is redirected to the \texttt{viewer.ts} file. The entrypoint to the viewer is the \texttt{renderProteinView} method, which will be covered later on. The viewer file is responsible for visualizing the structure, the pockets, binding sites and scores. The last step is to combine the plug-ins together, so that the user can interact with the structure and the data.
 
@@ -31,9 +38,11 @@ MolStar (also Mol*) is a TypeScript library for visualizing protein structures. 
     \label{fig:molstar}
 \end{figure}
 
-After invoking the \texttt{renderProteinView} method, a MolStar viewer instance is created by calling the \texttt{createPluginUI} method from the library. An instance of \texttt{PluginUIContext} is returned. This instance is saved and used throughout the entire existence of the session. After the initialization, the main React component called \texttt{Application} is rendered for the first time. After mounting the component, the main visualization method \texttt{sendDataToPlugins} is called. This method from \texttt{data-loader.ts} is responsible for sending the prediction data for both plugins. Most of the code related to MolStar is located in the \texttt{molstar-visualise.ts} file.
+After invoking the \texttt{renderProteinView} method, a MolStar viewer instance is created by calling the \texttt{createPluginUI} method from the library. An instance of \texttt{PluginUIContext} is returned. This instance is saved and used throughout the entire existence of the session. After the initialization, the main React component called \texttt{Application} is rendered for the first time. After mounting the component, the main visualization method \texttt{sendDataToPlugins} is called. This method from \texttt{data-loader.ts} is responsible for sending the prediction data for both plugins.
 
-Firstly, the program asks for the API endpoint URL which resolves to a structure file. This file is loaded into MolStar via the \texttt{loadStructureIntoMolstar} method. This method parses the structure based on the file format and creates all of the available representations, such as surface, cartoon and ball-and-stick. It also tries to show the water molecules and ligands.
+Some of the mentioned methods were already present in previous versions of PrankWeb. One of the goals of this thesis was to integrate MolStar into PrankWeb by replacing LiteMol. This lead to removal of the original LiteMol related code and introduced a few changes to the existing methods loading data into the viewer. All of MolStar related code was written from scratch to fit the needs of PrankWeb. Most of the code related to MolStar is located in the \texttt{molstar-visualise.ts} file. The following text describes the flow of the MolStar related interactions that create the core functionality of PrankWeb. These newly introduced methods call the MolStar library methods to create the visualization just from the data available in the prediction file and the structure file.
+
+Firstly, the program asks for the API endpoint URL which resolves to a structure file. This file is loaded into MolStar via the \texttt{loadStructureIntoMolstar} method. This method parses the structure based on the file format and creates all of the available representations, such as surface, cartoon and ball-and-stick. It also tries to show the water molecules and ligands, if there are any.
 
 When the structure is successfully shown to the user, a prediction is fetched from the API. Then, the 1D viewer is initialized. The 1D viewer connects to the MolStar plugin via callbacks. When the user hovers over a residue in the 1D viewer, the residue is highlighted in the MolStar plugin as well. When the user clicks a residue (or a pocket block), then the specific residue is focused in the MolStar plugin. The 1D viewer calls the \texttt{highlightInViewerAuthId} and \texttt{highlightInViewerLabelIdWithoutFocus} methods. See \cref{subsec:frontend-saguaro} for more details about the code that explains the interactions between the 1D viewer and the MolStar plugin.
 
@@ -69,7 +78,7 @@ In the end, we will show a brief code structure of the \texttt{molstar-visualise
 \subsection{RCSB Saguaro 1D Feature Viewer}
 \label{subsec:frontend-saguaro}
 
-Alongside to the MolStar plugin, we use the RCSB Saguaro 1D Feature Viewer to display the pockets, actual binding sites and scores in a simple view mapped to the residues. This plugin is designed to easily identify multiple interactions on a single residue.
+Alongside to the MolStar plugin, we use the RCSB Saguaro 1D Feature Viewer to display the pockets, actual binding sites and scores in a simple view mapped to the residues, which is the key feature of this plugin. The viewer is designed to easily identify multiple annotations on a single residue.
 
 The RCSB Saguaro 1D Feature Viewer is a TypeScript library for visualizing protein features in a 1D view. An example usage is shown in \cref{fig:1d-viewer}. The code is available on GitHub\footnote{\url{https://github.com/rcsb/rcsb-saguaro}}. Documentation is available and the usage is simple, but it is important to keep in mind that the library is still under active development and the interface may change in the future.
 
@@ -80,13 +89,15 @@ The RCSB Saguaro 1D Feature Viewer is a TypeScript library for visualizing prote
     \label{fig:1d-viewer}
 \end{figure}
 
+In the original PrankWeb implementation, Protael was used for mapping the annotation to the single residues. In this thesis, we decided to use the RCSB Saguaro 1D Feature Viewer instead. The main reason for this decision is that the RCSB Saguaro 1D Feature Viewer is a more extensible library and is actively maintained. So, all of the code related to Protael was removed and replaced with new code using the RCSB Saguaro 1D Feature Viewer to provide the same functionality.
+
 Most of the methods are defined in the \texttt{rcsb-visualise.ts} file. In our case, as described in \cref{subsec:frontend-molstar}, the 1D viewer gets initialized by the \texttt{sendDataToPlugins} method. This calls the \texttt{initRcsb} method which prepares all of the data for the plug-in.
 
 The first thing to notice is calculating the viewer actual width. This is done in the \texttt{calculateViewerWidth} method. Unluckily, the viewer allows only a fixed width measured in pixels. This is a problem, as the viewer is not responsive and every time the user resizes the window, the viewer would have to be re-initialized, which would be pretty inefficient. So, for the first time the page loads, we calculate the width of the viewer based on a knowledge of the desired width that is set via CSS. We also have to subtract a certain amount of pixels to account not only for the viewer itself, but also for the margins, paddings and a custom viewer scrollbar, which is, once again, in-built in the viewer and is not customizable. We discussed this issue and came to a conclusion that the best solution is to add better-looking custom scrollbars to the viewer to provide a better user experience until the viewer is made responsive.
 
 Then, the RCSB board is configured to interact with the MolStar viewer. This is done via the \texttt{onHighlight} and \texttt{elementClicked} methods. The first method is called when the user hovers over a certain residue in the 1D viewer. The actual callback is debounced to prevent lagging. A request for highlighting the specific residue in MolStar is then sent. The second method is called when the user clicks on a residues in the 1D viewer. A similar request is sent to MolStar with the difference that the residue is also zoomed in.
 
-The last step is to prepare the actual data for each of the so-called tracks. This is done in the \texttt{createRowConfigDataRcsb} method. A sequence track simply contains the protein amino acids. The binding track contains the actual binding sites computed by P2Rank. Pocket tracks are distinguished by different colors, which are picked firstly based on color-blind schemes to ensure the best accessibility, secondly randomly. The pocket color is changed in the original pocket data as well, so that the same colors for the pockets are used throughout the application. The last tracks are the conservation and pLDDT tracks, if available. Computation of the pocket tracks is not simple and straightforward, as the JSON file provided by P2Rank does not fit the viewer's interface, so the method highly relies on the JSON structure.
+The last step is to prepare the actual data for each of the so-called tracks. A track represents one row (or multiple rows) containing information about a specific annotation. This is done in the \texttt{createRowConfigDataRcsb} method. A sequence track simply contains the protein amino acids. The binding track contains the actual binding sites computed by P2Rank. Pocket tracks are distinguished by different colors, which are picked firstly based on color-blind schemes to ensure the best accessibility, secondly randomly. The pocket color is changed in the original pocket data as well, so that the same colors for the pockets are used throughout the application. The last tracks are the conservation and pLDDT tracks, if available. Computation of the pocket tracks is not simple and straightforward, as the JSON file provided by P2Rank does not fit the viewer's interface, so the method highly relies on the JSON structure.
 
 The 1D viewer does not rely on any React components and the only interaction may be done via the MolStar plugin simply by hovering over the residues, as described in \cref{subsec:frontend-molstar}.
 
@@ -106,7 +117,7 @@ The application uses the following components:
 
 \begin{itemize}
     \item \textbf{Application} - the main component of the app, responsible for the overall structure of the page including the viewers
-    \item \textbf{ToolsBox} - a component containing tools for changing the structure representation, coloring residues, hiding low-confidence residues and downloading data
+    \item \textbf{ToolBox} - a component containing tools for changing the structure representation, coloring residues, hiding low-confidence residues and downloading data
     \item \textbf{StructureInformation} - a component containing the structure name
     \item \textbf{PocketList} - a component containing a list of all pockets with their scores and a button for hiding/showing all of them
     \item \textbf{Pocket} - a component containing a single pocket with its information and buttons for hiding/showing the pocket, highlighting the pocket and opening a dialog with the pocket details
@@ -122,6 +133,8 @@ The components are styled as Bootstrap cards and thus they are responsive. Altho
 
 \xxx{TODO: maybe some more details?}
 
+\xxx{TODO: add UML diagram}
+
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\textwidth]{img/react_molstar.pdf}
@@ -132,7 +145,9 @@ The components are styled as Bootstrap cards and thus they are responsive. Altho
 \section{Plug-ins}
 \label{sec:plugins}
 
-The second goal of this thesis is to introduce a possibility to extend the current functionality of the application by adding new plug-ins (also called tasks). The plug-ins enable post-proccesing of the computed prediction. There are two plug-in categories: client-side and server-side. It is assumed that the client-side plug-ins will be used for simpler tasks that may be computed from the existing data in each session, on the contrary the server-side plug-ins will be used for complex tasks that are more time-consuming and possibly utilize third-party software.
+The second goal of this thesis was to introduce a possibility to extend the current functionality of the application by adding new plug-ins (also called tasks). The plug-ins enable post-proccesing of the pockets. 
+
+After a discussion, we created the following plug-in categories: client-side and server-side. It is assumed that the client-side plug-ins will be used for simpler tasks that may be computed from the existing data in each session, on the contrary the server-side plug-ins will be used for complex tasks that are more time-consuming and possibly utilize third-party software.
 
 The PrankWeb interface for both of the tasks works as a set of React components that are modular, so new plug-ins may be introduced in an easy way without modifying much of the current code.
 
@@ -163,20 +178,20 @@ Currently, the client-side plug-ins are defined in the \texttt{tasks} subdirecto
 
 As an example of a client-side plug-in, we have implemented a plug-in that computes the expected volume of the pocket. For this purpose, we have created a \texttt{tasks/client-atoms-volume.tsx} file that contains \texttt{computePocketVolume} and \texttt{renderOnTaskVolumeCompleted} methods that conform to the \texttt{compute} and \texttt{renderOnComplete} props of the \texttt{PocketClientTask} component. In this post-processing, we are using a convex hull algorithm to get coordinates of the hull vertices. Then, we use a simple formula to compute the volume of the convex hull using the coordinates of the vertices based on triangulation of the hull \cite{zhang2001efficient}. The result is then rendered in the dialog as a simple number. This implementation saves the computed results in a hashmap directly in the implementation file. This is not the most efficient way to store the results, on the other hand, it is a simple solution that is sufficient for this use case.
 
-Implementing a new client-side plug-in is covered in \cref{sec:developer}.
+Creating a custom new client-side plug-in is covered in detail in \cref{sec:developer}.
 
 \subsection{Server-side plug-ins}
 \label{subsec:server-side-plugins}
 
-Server-side plug-ins create an opportunity to perform more complex post-processing that takes more time to compute. Our intention was to create a possibility to use third-party software for the post-processing. Server-side tasks are meant to be parametrized by the user in some way.
+Server-side plug-ins create an opportunity to perform more complex post-processing that takes more time to compute. Our intention was to allow users to use third-party software for the post-processing. Server-side tasks are meant to be parametrized by the user in some way.
 
-The plug-ins are defined as a Docker containers in a similar way as the P2Rank executor (as mentioned in \cref{sec:prankweb_arch}).
+The plug-ins are define in a similar way as the P2Rank executor, which may be processed by Docker containers (as mentioned in \cref{sec:prankweb_arch}).
 
-There are a few steps that have to be done to implement a new server-side plug-in. First, some API endpoints for the plug-in as well as the folder and file structure need to be defined. This is done in the \texttt{web-server} folder in Flask. Usually, it is expected that Flask will prepare the needed directories and files for the actual Docker container. For this process, it is typical to create a new Python class to contain all of this logic.
+There are a few steps that have to be done to implement a new server-side plug-in. First, API endpoints for the plug-in as well as the folder and file structure need to be defined. This is done in the \texttt{web-server} folder in Flask. Usually, it is expected that Flask will prepare the needed directories and files for the actual Docker container. For this process, it is typical to create a new Python class to contain all of this logic.
 
 Then, in the Celery client configuration file in Flask, new bindings are created for the new plug-in. This includes creating a new Celery queue as well as introducing a new task that gets executed on the backend identified by its name.
 
-After completing all of the Flask tasks, a new Docker container has to be created. The container should install Python with Celery and any other tools needed for the post-processing. It is expected that a new \texttt{Dockerfile} will be created for this purpose. After setting up the container, Celery bindings have to be created in a similar way as in Flask. Be careful that the Celery task name has to be the same as in Flask. Then, any method may be called from this Celery binding. This means that the actual post-processing may be finally done here. The first option is to do this in Python entirely, but it is also possible to call any other tool from the container. The only requirement is to have everything set up properly. 
+After completing all of the Flask tasks, a new Docker container has to be created. The container should install Python with Celery and any other tools needed for the post-processing. It is expected that a new \texttt{Dockerfile} will be created for this purpose. After setting up the container, Celery bindings have to be created in a similar way as in Flask. Then, any method may be called from this Celery binding. This means that the actual post-processing may be finally done here. The first option is to do this in Python entirely, but it is also possible to call any other tool from the container. The only requirement is to have everything set up properly. 
 
 The Docker container is also responsible for saving the results of the post-processing. This means that either some of the Python files or the third-party tool itself has to save the results in the correct location. Keep in mind that the location is very likely to depend on the API endpoints defined in Flask. Now, the Docker container is ready to be used.
 

@@ -28,6 +28,8 @@ In PrankWeb, the main focus is to create a \textbf{prediction} of the potential 
 
 Bounding a ligand to a binding site is called \textbf{docking}. The docking is a complex process that involves consideration of all the interactions between the ligand and the binding site. \cite{sulimov2019advances}
 
+\xxx{TODO: add predicted structures from AlphaFold}
+
 \xxx{TODO: maybe add some pictures}
 
 \section{Used data formats}
@@ -101,7 +103,7 @@ Now we will present the current Docker containers in more detail to get a broade
 
 The gateway container is a reverse proxy that is responsible for routing the requests to the backend. In PrankWeb, we utilize Nginx\footnote{Nginx is a web server used for serving static HTML content and acts as a reverse proxy. More information available at \url{https://www.nginx.com/}.} as a reverse proxy. The Nginx configuration file is located in the \texttt{gateway/nginx.conf} file. The server configuration includes not only the reverse proxy routes, but a mapping to the Flower and Prometheus services as well.
 
-Moreover, \texttt{gateway/Dockerfile} is responsible for the installation of the frontend. The frontend is a React\footnote{React is a library for creating modern and intuitive user interfaces for web browsers. More information available at \url{https://react.dev/}.} application built via webpack\footnote{webpack is a module bundler used to bundle JavaScript for web browsers. More information available at \url{https://webpack.js.org/}.}. PrankWeb utilizes two main external libraries for the bioinformatic part of the application, MolStar \cite{10.1093/nar/gkab314} and RCSB Saguaro Feature 1D Viewer \cite{10.1093/bioinformatics/btaa1012}. We will discuss these libraries in more detail in \cref{sec:frontend}.
+Moreover, \texttt{gateway/Dockerfile} is responsible for the installation of the frontend. The frontend is a React\footnote{React is a library for creating modern and intuitive user interfaces for web browsers. More information available at \url{https://react.dev/}.} application built via webpack\footnote{webpack is a module bundler used to bundle JavaScript for web browsers. More information available at \url{https://webpack.js.org/}.}. PrankWeb utilizes two main external libraries for the bioinformatic part of the application, MolStar and RCSB Saguaro Feature 1D Viewer. We will discuss these libraries in more detail in \cref{sec:frontend}.
 
 The entire frontend is written in TypeScript, JavaScript, CSS, SCSS, and HTML.
 
