@@ -1,7 +1,8 @@
 \chapter{User documentation}
 \label{chap:user_docs}
 
-\xxx{TODO: add motivation for users, distinguish between a regular user and a developer}
+In this chapter, the user documentation is presented. Firstly, the deployment process is described. We distinguish between two types of users, regular users and developers. We expect regular users to use PrankWeb without modifying the existing code. On the other side, we expect developers to add their own plug-ins or make other changes to the existing architecture. For this purpose, we describe a guide for both types of users.
+
 
 \section{Deployment}
 \label{sec:deployment}
@@ -95,8 +96,37 @@ Official documentation for the local deployment is available at \url{https://git
 
 \section{Regular user}
 \label{sec:regular_user}
-\xxx{TODO: add some screenshots and a brief description of the UI}
+\xxx{TODO: add some screenshots and a brief description of the UI (when the docking is implemented)}
 
 \section{Developer}
 \label{sec:developer}
+
+Developers may modify the existing code to their needs. They may edit any of the existing containers described in \cref{sec:prankweb_arch}. One of the expected changes is to implement custom client-side and server-side plug-ins. The following sections describe how to do that.
+
+Before reading the contents of this section, please familiarize yourself with the topic of plug-ins described in \cref{sec:plug_ins}.
+
+\subsection{Client-side plug-ins}
+\label{subsec:dev_client_side}
+
+Implementing custom client-side plug-ins is simple. The creation may be simplified to the following steps:
+
+\begin{enumerate}
+    \item Introduce a new task type in the \texttt{frontend/custom-types.ts} file by adding a new value to the \texttt{ClientTaskType} enum.
+    \item Create a new \texttt{.tsx} file, preferrably in the \texttt{frontend/tasks} directory.
+    \item In this file, implement a method that will compute the task and returns a \texttt{Promise<ClientTaskData>}.
+    \item Implement a method that will render the completed task in the dialog window. This method takes the \texttt{ClientTaskData} as an argument and returns a React component - \texttt{JSX.Element}. An example is shown in \cref{lst:code/client-sample-task}.
+    \item Optionally, implement saving the computed volumes at least to a hashmap or implement another sort of caching.
+    \item Add the new task component anywhere to be rendered. We suggest adding it to the existing dialog window represented by the \texttt{PocketDialogDetails} component. An example is shown in \cref{lst:code/pocket-dialog-details-client-sample}.
+\end{enumerate}
+
+\lstinputlisting[language=JavaScript,caption={An example client-side task (in this case referred to as \texttt{frontend/tasks/client-sample-task.tsx}).}, label={lst:code/client-sample-task}]{code/client-sample-task.tsx}
+
+After this implementation, the client-side plug-in is ready to be used.
+
+\lstinputlisting[language=JavaScript,caption={A modified \texttt{PocketDialogDetails} component including the newly introduced client-side plug-in (\texttt{frontend/viewer/components/pocket-dialog-details.tsx}).}, label={lst:code/pocket-dialog-details-client-sample}]{code/pocket-dialog-details-client-sample.tsx}
+
+\subsection{Server-side plug-ins}
+\label{subsec:dev_server_side}
+
+
 \xxx{TODO: add a brief description on how to add new client/server side tasks, change the current visuals etc.}
