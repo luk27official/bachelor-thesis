@@ -1,0 +1,74 @@
+C4Component
+
+Person(user, "User")
+
+Enterprise_Boundary("prankweb-boundary", "PrankWeb") {
+
+  System_Boundary("gateway-boundary", "Gateway") {
+
+    Container("nginx", "NginX", "", "Proxy to other components.")
+
+    Component("frontend", "Frontend", "", "Served as a static file.")
+   
+    Rel("nginx", "flower", "")
+    %% Rel("nginx", "monitor", "")
+    Rel("nginx", "web-server", "")
+
+    Rel_Right("user", "nginx", "")
+
+  }
+
+  System_Boundary("communication", "Communication Layer") {
+    Container("flower", "Flower & Prometheus", "", "RabbitMQ monitoring.")
+
+    %% Component("monitor", "Monitor", "", "Listen for funPDBe messages.")
+
+    Container("rabbitmq", "RabbitMQ", "", "Message broker.")
+
+    Component("web-server", "Web-server (Flask)", "", "")
+
+    Rel("web-server", "rabbitmq", "")
+  }
+
+  System_Boundary("backend_exec", "Backend executors") {
+
+    System_Boundary("executor-docking-boundary", "executor-docking") {
+
+        Component("docking", "Docking tools")
+
+        Component("executor-docking", "Executor-docking", "", "Employs Celery workers.")
+        
+        Rel("executor-docking", "rabbitmq", "")
+
+    }
+
+    System_Boundary("executor-p2rank-boundary", "executor-p2rank") {
+
+        %% Component("conservation/alignment", "Conservation Alignment")
+
+        %% Component("conservation/hmm", "Conservation HMM")
+
+        Component("conservation/all", "Conservation tools")
+
+        Component("executor-p2rank", "Executor-p2rank", "", "Employs Celery workers.")
+        
+        Component("p2rank", "P2Rank")
+
+        %% Component("java-tools", "Java-tools")
+
+        Rel("executor-p2rank", "rabbitmq", "")
+
+    }
+  }
+
+}
+
+Enterprise_Boundary("external", "External Databases") {
+    ContainerDb("alphafold", "Alphafold DB")
+    ContainerDb("pdb", "RCSB PDB")
+
+    Rel("executor-p2rank", "alphafold", "")
+    Rel("executor-p2rank", "pdb", "")
+}
+
+UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")

@@ -37,17 +37,37 @@ Bounding a ligand to a binding site is called \textbf{docking}. The docking is a
 
 PrankWeb uses several data formats for the input and output of data throughout the application. In this section, we will briefly introduce the used data formats.
 
-\xxx{TODO: maybe add examples of the data formats?}
-
 \subsection{JSON}
 \label{subsec:json}
 
 JSON (JavaScript Object Notation) is a data format used for storing JavaScript objects. The syntax of this format is simple and the main advantages of this format are its readability and simple usage on the frontend. The main idea of JSON is to store its data in key-value pairs. The keys are strings and the actual values may be in any format such as string, number, boolean, array, or another object.
 
+\begin{lstlisting}[language=JavaScript,caption={
+    An example of a JSON file used for storing information about the prediction for the 2SRC protein structure.
+}]
+{
+    "id": "2SRC",
+    "database": "v3",
+    "created": "2023-02-25T20:58:07",
+    "lastChange": "2023-02-25T20:58:26",
+    "status": "successful",
+    "metadata": {
+        "predictionName": "2SRC",
+        "structureName": "structure.cif"
+    }
+}
+\end{lstlisting}
+
+
 \subsection{PDB}
 \label{subsec:PDB}
 
 PDB (Protein Data Bank format) is a file format that is used for describing three-dimensional protein structures. This format stores information about the atom coordinates and their connections \cite{bernstein1977protein}. Alongside this information, the PDB format may contain additional metadata as well. It is still used for many protein structures, but the format size is limited and thus it does not support large structures, so in some cases it is replaced by the PDBx/mmCIF format (\cref{subsec:PDBx_mmCIF}) \cite{adams2019announcing}. A large database of PDB files for protein structures is called RCSB PDB\footnote{PDB database is available at \url{https://www.rcsb.org/}.}.
+
+\lstinputlisting[caption={
+    An edited example of a PDB file used for storing information about the 2SRC protein structure.
+}]{code/2src.pdb}
+
 
 \subsection{PDBx/mmCIF}
 \label{subsec:PDBx_mmCIF}
@@ -58,6 +78,13 @@ PDBx/mmCIF (Protein Data Bank extended / macromolecular Crystallographic Informa
 \label{subsec:FASTA}
 
 FASTA (FAST-All) is a text format that describes either a nucleotide sequence, or a protein sequence. In our case, this format is used in the second sense. This format is simple as it only contains a brief description of the protein on the first line starting by the ">" character and the sequence itself on the next line. The sequence is represented by a string of letters that represent the amino acids. This format was created for the FASTA program that was used for sequence alignment \cite{lipman1985rapid}.
+
+\begin{lstlisting}[caption={
+    An example of a FASTA file used for storing information about the 7VNU sequence.
+}, breaklines=true, breakatwhitespace=false,escapechar=*]
+>7VNU_1|Chains A, B, C, D|Nucleoprotein|Severe acute respiratory syndrome coronavirus 2 (2697049)
+GASNNTASWFTALTQHGKEDLKFPRGQGVPINTNSSPDDQIGYYRRATRRIRGGDGKMKDLSPRWY FYYLGTGPEAGLPYGANKDGIIWVATEGALNTPKDHIGTRNPANNAAIVLQLPQGTTLPKGFYAE
+\end{lstlisting}
 
 \subsection{CSV}
 \label{subsec:CSV}
@@ -79,16 +106,25 @@ The tool was written in Java and requires only the JRE\footnote{Java Runtime Env
 PrankWeb consists of several components that cooperate together. Currently, the application is deployed via Docker\footnote{Docker is a virtualization tool providing a stable interface for isolating and running applications. More information available at \url{https://www.docker.com/}.} containers that are described in the Docker-compose configuration file. The application consists of the following components:
 
 \begin{itemize}
-    \item \textbf{gateway} - a reverse proxy that is responsible for routing the requests to the respective backend services
-    \item \textbf{rabbitmq} - a broker that is used for communication between the gateway and the backend services
+    \item \textbf{gateway} - a reverse proxy that is responsible for routing the requests to the respective backend services and for serving the frontend
+    \item \textbf{rabbitmq} - a broker that is used for communication between the web server and the backend services
     \item \textbf{flower} - a tool for monitoring the RabbitMQ broker and Celery workers
-    \item \textbf{web-server} - a WSGI server that is responsible for serving the web application
+    \item \textbf{web-server} - a Flask server responsible for communication between the gateway and the RabbitMQ broker
     \item \textbf{executor-p2rank} - a backend service that is responsible for running the P2Rank tool, employs Celery workers
     \item \textbf{executor-docking} - a backend service that is responsible for running the docking tool, employs Celery workers \xxx{docking not done yet though}
     \item \textbf{prometheus} - a tool for monitoring the Docker containers 
 \end{itemize}
 
-\xxx{TODO: add a diagram of the architecture}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[height=0.95\textheight]{img/architecture.pdf}
+    \caption{A simplified C4 model of the PrankWeb architecture.}
+    \label{fig:architecture}
+\end{figure}
+
+A diagram of the architecture is shown in \cref{fig:architecture}. This diagram is a simplified version of the C4 model \cite{vazquez2020c4} for PrankWeb, dark blue boxes represent the containers, light blue boxes represent the components, and the arrows represent the communication between the services. For the completed C4 model with more details, see the original wiki page\footnote{The original wiki page is available at \url{https://github.com/cusbg/p2rank-framework/wiki/PrankWeb-architecture}}.
+
+\xxx{TODO: update the diagram on the Wiki}
 
 Some of the containers include environment variables that are required for the proper functionality. The environment variables are specified in the docker-compose configuration file. The user may modify these also by creating a \texttt{.env} file in the root directory of the project.
 

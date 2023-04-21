@@ -1,0 +1,70 @@
+HEADER    TYROSINE-PROTEIN KINASE                 29-DEC-98   2SRC              
+TITLE     CRYSTAL STRUCTURE OF HUMAN TYROSINE-PROTEIN KINASE C-SRC,             
+TITLE    2 IN COMPLEX WITH AMP-PNP                                              
+COMPND    MOL_ID: 1;                                                            
+COMPND   2 MOLECULE: TYROSINE-PROTEIN KINASE SRC;                               
+COMPND   3 CHAIN: A;                                                            
+COMPND   4 FRAGMENT: RESIDUES 86-836, CONTAINING SH2, SH3, KINASE 2             
+COMPND   5 DOMAINS AND C-TERMINAL TAIL;                                         
+COMPND   6 SYNONYM: C-SRC, P60-SRC;                                             
+COMPND   7 EC: 2.7.1.112;                                                       
+COMPND   8 ENGINEERED: YES                                                      
+...                                  
+JRNL        AUTH   W.XU,A.DOSHI,M.LEI,M.J.ECK,S.C.HARRISON                      
+JRNL        TITL   CRYSTAL STRUCTURES OF C-SRC REVEAL FEATURES OF ITS           
+JRNL        TITL 2 AUTOINHIBITORY MECHANISM.                                    
+JRNL        REF    MOL.CELL                      V.   3   629 1999              
+JRNL        REFN                   ISSN 1097-2765                               
+JRNL        PMID   10360179                                                     
+JRNL        DOI    10.1016/S1097-2765(00)80356-1                                
+...                
+DBREF  2SRC A   83   533  UNP    P12931   SRC_HUMAN       85    535             
+SEQADV 2SRC PTR A  527  UNP  P12931    TYR   529 MODIFIED RESIDUE               
+SEQRES   1 A  452  MET VAL THR THR PHE VAL ALA LEU TYR ASP TYR GLU SER          
+...                 
+MODRES 2SRC PTR A  527  TYR  O-PHOSPHOTYROSINE                                  
+HET    PTR  A 527      16                                                       
+HET    ANP  A   1      31                                                       
+HETNAM     PTR O-PHOSPHOTYROSINE                                                
+HETNAM     ANP PHOSPHOAMINOPHOSPHONIC ACID-ADENYLATE ESTER                      
+HETSYN     PTR PHOSPHONOTYROSINE                                                
+FORMUL   1  PTR    C9 H12 N O6 P                                                
+FORMUL   2  ANP    C10 H17 N6 O12 P3                                            
+FORMUL   3  HOH   *269(H2 O)                                                    
+HELIX    1   1 SER A  134  TYR A  136  5                                   3    
+HELIX    2   2 ARG A  155  LEU A  162  1                                   8    
+HELIX    3   3 LEU A  223  TYR A  229  1                                   7    
+...
+SHEET    1   A 2 PHE A  86  ALA A  88  0                                        
+SHEET    2   A 2 VAL A 137  PRO A 139 -1  N  ALA A 138   O  VAL A  87           
+SHEET    1   B 3 THR A 129  PRO A 133  0                                        
+SHEET    2   B 3 TRP A 118  SER A 123 -1  N  ALA A 121   O  GLY A 130           
+SHEET    3   B 3 LEU A 108  ASN A 112 -1  N  ASN A 112   O  LEU A 120           
+...      
+LINK         N   PTR A 527                 C   GLN A 526     1555   1555  1.33  
+LINK         C   PTR A 527                 N   GLN A 528     1555   1555  1.33  
+CISPEP   1 GLU A  332    PRO A  333          0        -0.29                     
+SITE     1 AC1 20 LEU A 273  GLY A 276  VAL A 281  ALA A 293                    
+SITE     2 AC1 20 LYS A 295  THR A 338  GLU A 339  TYR A 340                    
+SITE     3 AC1 20 MET A 341  SER A 345  ASP A 386  ARG A 388                    
+SITE     4 AC1 20 ASN A 391  LEU A 393  ASP A 404  HOH A1064                    
+SITE     5 AC1 20 HOH A1147  HOH A1200  HOH A1208  HOH A1230                    
+CRYST1   50.590   72.970  172.690  90.00  90.00  90.00 P 21 21 21    4          
+...                    
+ATOM      1  N   THR A  84      33.954  62.803  55.198  1.00 38.76           N  
+ATOM      2  CA  THR A  84      32.735  62.188  54.583  1.00 39.76           C  
+ATOM      3  C   THR A  84      32.941  60.717  54.186  1.00 37.91           C  
+ATOM      4  O   THR A  84      32.021  60.068  53.678  1.00 36.13           O  
+ATOM      5  CB  THR A  84      32.285  62.973  53.319  1.00 41.34           C  
+ATOM      6  OG1 THR A  84      33.424  63.240  52.489  1.00 41.84           O  
+ATOM      7  CG2 THR A  84      31.616  64.288  53.711  1.00 40.28           C  
+ATOM      8  N   THR A  85      34.140  60.192  54.419  1.00 35.88           N  
+ATOM      9  CA  THR A  85      34.437  58.806  54.075  1.00 34.00           C  
+ATOM     10  C   THR A  85      34.001  57.804  55.154  1.00 33.76           C  
+...
+CONECT 3547 3554                                                                
+CONECT 3554 3547 3555                                                           
+CONECT 3555 3554 3556 3558                                                      
+...                                                
+MASTER      276    0    2   17   15    0    5    6 3915    1   49   35          
+END                                                                             
