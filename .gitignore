@@ -20,6 +20,7 @@ pdfa.xmpi
 *.snm
 .*.swp
 *.synctex.gz
+*.synctex(busy)
 thesis-blx.bib
 thesis-run.xml
 thesis.run.xml

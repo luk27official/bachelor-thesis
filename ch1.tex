@@ -26,11 +26,13 @@ Functions of proteins depend not only on the protein structures, but also on the
 
 One ligand binds on a part of the protein surface. This is called the \textbf{(ligand-)binding site}. This binding is not only defined by its molecule, but also by other properties such as shape, size, and charge. We refer to the binding site as a \textbf{pocket}. \cite{nelson2008lehninger}
 
-In PrankWeb, the main focus is to create a \textbf{prediction} of the potential locations and interacting residues of small molecule ligands for a given protein structure. These predictions may or may not be based on \textbf{conservation} score of the residues. Conservation score is a measure of how similar the residues are in different protein structures.
+In PrankWeb, the main focus is to create a \textbf{prediction} of the potential locations and interacting residues of small molecule ligands for a given protein structure. 
 
-\xxx{TODO: fix this according to the mail}
+These predictions may or may not be based on various physical and chemical properties of spots on the protein surface, and \textbf{evolutionary conservation} score of the residues. Conservation score is a measure of how similar the residues are in different protein structures. In PrankWeb, evolutionary conservation is explicitly visualized.
 
-Bounding a ligand to a binding site is called \textbf{docking}. The docking is a complex process that involves consideration of all the interactions between the ligand and the binding site. \cite{sulimov2019advances}
+One of the PrankWeb extensions is the possibility to \textbf{dock} a ligand to a binding site. Docking is a complex process of computing possible connection of a ligand to the protein structure. This computation also provides information about the potential energy of the protein-ligand complex. This altogether allows us to predict the potential of real-life binding of the ligand to the protein structure. \cite{sulimov2019advances}
+
+\xxx{TODO: have a look at the last paragraph once more}
 
 \xxx{TODO: maybe add some pictures}
 
