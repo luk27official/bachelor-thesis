@@ -33,7 +33,7 @@ After installing Docker, the PrankWeb repository needs to be cloned, preferrably
 
     docker volume create --name prankweb_services --opt type=none --opt device=/tmp/services --opt o=bind
     \end{lstlisting}
-    \xxx{TODO: maybe add docking}
+    \xxx{TODO: add docking}
     \item Optionally, create a \texttt{.env} file to change the default variables defined in the \texttt{docker-compose.yml} file. Notice that UID and GID need to have write permissions to the directories created in the previous steps.
     \item Build the Docker images using the following command:
     \begin{lstlisting}
