@@ -183,7 +183,7 @@ Creating a custom new client-side plug-in is covered in detail in \cref{sec:deve
 
 Server-side plug-ins create an opportunity to perform more complex post-processing that takes more time to compute. Our intention was to allow users to use third-party software for the post-processing. Server-side tasks are meant to be parametrized by the user in some way.
 
-The plug-ins are define in a similar way as the P2Rank executor, which may be processed by Docker containers (as mentioned in \cref{sec:prankweb_arch}).
+The plug-ins are defined in a similar way as the P2Rank executor, which may be processed by Docker containers (as mentioned in \cref{sec:prankweb_arch}).
 
 There are a few steps that have to be done to implement a new server-side plug-in. First, API endpoints for the plug-in as well as the folder and file structure need to be defined. This is done in the \texttt{web-server} folder in Flask. Usually, it is expected that Flask will prepare the needed directories and files for the actual Docker container. For this process, it is typical to create a new Python class to contain all of this logic.
 
@@ -203,7 +203,7 @@ After completing all of the steps, the new plug-in should be ready to be used. T
     An edited version of the \texttt{pocket-server-parametrized-task.tsx} component.
 }]{code/pocket-server-parametrized-task.tsx}
 
-The component works similarly to the client-side plug-in component. There are two methods that are responsible for the computation and rendering of the results. One of the differences is that these two methods are now identifiable by a hash that has to be computed from the parameters before the actual computation. This hash is not only used for frontend identification, but also for the backend. This technique allows us to differ between multiple tasks of the same type with different parameters.
+The component works similarly to the client-side plug-in component. There are two methods that are responsible for the computation and rendering of the results. One of the differences is that these two methods are now identifiable by a hash that has to be computed from the parameters before the actual computation. The computation of a hash is done via the \texttt{hashMethod} method. This hash is not only used for frontend identification, but also for the backend. It is up to the developer, whether they will consider it as a possible input or just as a string for identification. This technique allows us to differ between multiple tasks of the same type with different parameters.
 
 There are more state variables as well. \texttt{modalOpen} and \texttt{formData} were introduced for receiving an input from the user, the current implementation opens a modal dialog with a text area. The \texttt{hash} is then computed from the input stored in the \texttt{formData} variable.
 
@@ -213,6 +213,32 @@ This allows us to render the hashes of the tasks that were computed both in this
 
 One last change was made to the \texttt{PocketDialogDetails} component. A new component \texttt{PocketRunningTasks} was created to display a list of tasks that are either running or completed in this session. This is done to make sure that the task results are available to the user in case the dialog is closed and reopened. Moreover, this allows the user to enter multiple parameters for the same task and see the results for all of them.
 
-\xxx{TODO: add an example of a server-side plug-in - docking, as soon as its completed}
+One of the goals of this thesis was to implement basic server-side molecular docking. Docking may be computationally very demanding, this makes it a perfect candidate for a server-side plug-in.
+
+Firstly, we designed a public API for the docking requests. There were three main needs:
+\begin{enumerate}
+    \item Starting new docking task with a given user input.
+    \item Receiving task results.
+    \item Receiving information about all tasks (including their status).
+\end{enumerate}
+The API routes were added to the Flask configuration file. The routes are defined as follows:
+
+\lstinputlisting[language=Python,caption={
+    An edited version of the \texttt{api\_v2.py} file.
+}]{code/api-v2.py}
+
+After designing the routes, a new class called \texttt{DockingTask} was created. This class is responsible for serving the API requests. This includes definition of the directory structure, saving the input files, preparing the info file, and calling the actual docking tool on the backend. In this class, most of the file errors are handled, as there are many opportunities for wrong inputs and requests. As all of the methods are important, we will focus on the one that is responsible for the actual docking. That is the \texttt{submit\_directory\_for\_docking} defined in the Celery client configuration file. This method sends a task named \texttt{docking} to the Celery queue. Note that for docking, a new Celery queue was created in the configuration file.
+
+\lstinputlisting[language=Python,caption={
+    An edited version of the \texttt{celery\_client.py} file.
+}]{code/celery-client.py}
+
+Then, a new Docker container was created in the \texttt{executor-docking} directory and added to the Docker-compose files. An important part of this step is to mark this container with the right Celery queue in the command.
+
+\lstinputlisting[language=clean,caption={
+    An edited extract from the \texttt{docker-compose.yml} file.
+}]{code/docker-compose.yml}
+
+\xxx{TODO: describe backend & frontend}
 
 \xxx{TODO: consider whether it is a good idea to describe the docker side even more and include some examples?}
