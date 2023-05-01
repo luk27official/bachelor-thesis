@@ -239,6 +239,16 @@ Then, a new Docker container was created in the \texttt{executor-docking} direct
     An edited extract from the \texttt{docker-compose.yml} file.
 }]{code/docker-compose.yml}
 
-\xxx{TODO: describe backend and frontend}
+The newly created Docker container is described in the \texttt{Dockerfile}. All of the needed tools for docking are downloaded and set up there. After setting up the container, Celery bindings are created in a similar way as in Flask in the \texttt{celery\_docking.py} file. This file contains routing for the Celery task sent from the Flask server. This calls methods from \texttt{run\_task.py} that contains that handle all of the work with the info file for the given structure (updates the status and timestamps). From there, the \texttt{dock\_molecule} method is called. \texttt{dock\_molecule} is responsible for the actual docking.
+
+Firstly, the structure is unzipped from the gzipped file created during the initial prediction. Then, we treat \texttt{.pdb} files a bit differently, structures in this file format are cleaned using the lePro tool to remove unnecessary information. After the possible structure cleanup, a tool called \texttt{prepare\_receptor} from the ADFR Suite to prepare the structure for docking. \cite{ravindranath2015autodockfr} Moving on, ligand preparation is done using the \texttt{rdkit} and \texttt{meeko} Python packages. \cite{landrum2013rdkit} The last step before docking is to prepare the bounding box for the docking program. This is done manually by parsing the input file, saving the result to a text file.
+
+In this stage, everything is properly set up for the docking. We use the \texttt{AutoDock Vina} program for the docking. AutoDock Vina enables us to dock the ligand in a simple and fast way, on the other side, the results are not as accurate. \cite{trott2010autodock} We still decided to use this tool due to a rather simple setup and fast computation. The docking program is invoked with the prepared parameters and the results are saved to a public folder.
+
+After the docking, the info file is updated with the result. The result file then may be downloaded by the actual user. The file may be viewed in several tools, such as PyMOL.
+
+Now, the only thing left is to implement the frontend components to provide an user-friendly way to dock the molecules. 
+
+\xxx{TODO: describe frontend}
 
 \xxx{TODO: consider whether it is a good idea to describe the docker side even more and include some examples?}
