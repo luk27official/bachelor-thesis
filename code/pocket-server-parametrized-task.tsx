@@ -15,6 +15,7 @@ export default class PocketServerParametrizedTask extends React.Component
         modalDescription: string,
         compute: (hash: string) => Promise<any>
         renderOnComplete: (responseData: ServerTaskData, hash: string) => JSX.Element
+        hashMethod: (prediction: PredictionInfo, pocket: PocketData, formData: string) => string
     }, {
         taskData: ServerTaskData | undefined,
         computed: boolean,

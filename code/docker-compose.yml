@@ -1,0 +1,15 @@
+  executor-docking:
+    build:
+      context: ./
+      dockerfile: ./executor-docking/Dockerfile
+      args:
+        UID: ${UID}
+        GID: ${GID}
+    command: ["celery", "--app=celery_docking", "worker", "--queues=docking", "--concurrency=4", "--hostname=executor-docking"]
+    restart: unless-stopped
+    volumes:
+      - docking:/data/prankweb/docking
+      - predictions:/data/prankweb/predictions
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

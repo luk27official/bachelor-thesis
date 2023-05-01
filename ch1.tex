@@ -115,7 +115,7 @@ PrankWeb consists of several components that cooperate together. Currently, the 
     \item \textbf{flower} - a tool for monitoring the RabbitMQ broker and Celery workers
     \item \textbf{web-server} - a Flask server responsible for communication between the gateway and the RabbitMQ broker
     \item \textbf{executor-p2rank} - a backend service that is responsible for running the P2Rank tool, employs Celery workers
-    \item \textbf{executor-docking} - a backend service that is responsible for running the docking tool, employs Celery workers \xxx{docking not done yet though}
+    \item \textbf{executor-docking} - a backend service that is responsible for running the docking tool, employs Celery workers
     \item \textbf{prometheus} - a tool for monitoring the Docker containers 
 \end{itemize}
 
@@ -187,8 +187,6 @@ All of the listed files are exposed via the REST API to the frontend. After post
 \label{subsec:executor-docking}
 
 This container is responsible for the docking backend task. More information about the docking task is available in \cref{subsec:server-side-plugins}.
-
-\xxx{TODO - not implemented yet, but the idea is pretty much the same as for the P2Rank executor}
 
 \subsection{Prometheus}
 \label{subsec:prometheus}
