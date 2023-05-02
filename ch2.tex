@@ -213,7 +213,7 @@ This allows us to render the hashes of the tasks that were computed both in this
 
 One last change was made to the \texttt{PocketDialogDetails} component. A new component \texttt{PocketRunningTasks} was created to display a list of tasks that are either running or completed in this session. This is done to make sure that the task results are available to the user in case the dialog is closed and reopened. Moreover, this allows the user to enter multiple parameters for the same task and see the results for all of them.
 
-One of the goals of this thesis was to implement basic server-side molecular docking. Docking may be computationally very demanding, this makes it a perfect candidate for a server-side plug-in.
+One of the goals of this thesis was to implement basic \textbf{server-side molecular docking}. Docking may be computationally very demanding, this makes it a perfect candidate for a server-side plug-in.
 
 Firstly, we designed a public API for the docking requests. There were three main needs:
 \begin{enumerate}
@@ -233,7 +233,7 @@ After designing the routes, a new class called \texttt{DockingTask} was created.
     An edited version of the \texttt{celery\_client.py} file.
 }]{code/celery-client.py}
 
-Then, a new Docker container was created in the \texttt{executor-docking} directory and added to the Docker-compose files. An important part of this step is to mark this container with the right Celery queue in the command.
+Then, a new Docker container was created in the \texttt{executor-docking} directory and added to the Docker-compose files. We introduced a new Docker volume to preserve the results as well. An important part of this step is to mark this container with the right Celery queue in the command.
 
 \lstinputlisting[language=clean,caption={
     An edited extract from the \texttt{docker-compose.yml} file.
@@ -247,8 +247,8 @@ In this stage, everything is properly set up for the docking. We use the \texttt
 
 After the docking, the info file is updated with the result. The result file then may be downloaded by the actual user. The file may be viewed in several tools, such as PyMOL.
 
-Now, the only thing left is to implement the frontend components to provide an user-friendly way to dock the molecules. 
+Now, the only thing left is to implement the frontend components to provide an user-friendly way to dock the molecules. We created a \texttt{ServerTaskData} enum for potential, alongside to \texttt{ServerTaskDataContents} that is an interface for data from the server-side. The main logic of server-side plugins is defined by implementing the \texttt{PocketServerParametrizedTask} component that was added to the \texttt{PocketDialogDetails} component in a similar way to the client plug-ins (see \cref{subsec:client-side-plugins}). The implementation was done in the \texttt{tasks/server-docking-task.tsx} file. This file has private methods that compute a bounding box for docking before submitting the task, and public exported methods that are responsible for calling the API and displaying the results. One of the methods should hash the input, but as long as we are using SMILES molecule representation \cite{weininger1988smiles}, there is no need to hash the input.
 
-\xxx{TODO: describe frontend}
+To finish the frontend implementation, a few more components are updated in order to show all results correctly. Firstly, we modified the \texttt{Application} component to keep all of the docking tasks in its state variable. This is done in the \texttt{getTaskList} method to create an ability to show all results of the completed tasks in the current session. This state variable called \texttt{serverTasks} then propagates to other components. Lastly, we bound the previously created methods to the \texttt{PocketRunningTasks} component to display the results of the docking tasks in the dialog window.
 
-\xxx{TODO: consider whether it is a good idea to describe the docker side even more and include some examples?}
+Creating a custom new server-side plug-in is briefly described in \cref{sec:developer}.

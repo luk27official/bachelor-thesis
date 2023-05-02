@@ -128,8 +128,6 @@ PrankWeb consists of several components that cooperate together. Currently, the 
 
 A diagram of the architecture is shown in \cref{fig:architecture}. This diagram is a simplified version of the C4 model \cite{vazquez2020c4} for PrankWeb, dark blue boxes represent the containers, light blue boxes represent the components, and the arrows represent the communication between the services. For the completed C4 model with more details, see the original wiki page\footnote{The original wiki page is available at \url{https://github.com/cusbg/p2rank-framework/wiki/PrankWeb-architecture}}. The diagram includes retrieving information about the structures from external databases from AlphaFold \cite{david2022alphafold} and RCSB PDB \cite{kouranov2006rcsb}.
 
-\xxx{TODO: update the diagram on the Wiki}
-
 Some of the containers include environment variables that are required for the proper functionality. The environment variables are specified in the docker-compose configuration file. The user may modify these also by creating a \texttt{.env} file in the root directory of the project.
 
 The docker-compose configuration file thus contains the entire PrankWeb logic. When employing a new plug-in or a new feature, a container may be introduced to this file to get easily integrated into the application.

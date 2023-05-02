@@ -32,8 +32,9 @@ After installing Docker, the PrankWeb repository needs to be cloned, preferrably
     docker volume create --name prankweb_predictions --opt type=none --opt device=/tmp/predictions --opt o=bind
 
     docker volume create --name prankweb_services --opt type=none --opt device=/tmp/services --opt o=bind
+
+    docker volume create --name prankweb_docking --opt type=none --opt device=/tmp/docking --opt o=bind
     \end{lstlisting}
-    \xxx{TODO: add docking}
     \item Optionally, create a \texttt{.env} file to change the default variables defined in the \texttt{docker-compose.yml} file. Notice that UID and GID need to have write permissions to the directories created in the previous steps.
     \item Build the Docker images using the following command:
     \begin{lstlisting}
@@ -128,5 +129,17 @@ After this implementation, the client-side plug-in is ready to be used.
 \subsection{Server-side plug-ins}
 \label{subsec:dev_server_side}
 
+Implementing custom server-side plug-ins is more complicated than the client-side ones. Creating a new server-side plug-in consists of the following steps:
 
-\xxx{TODO: add a brief description on how to add new client/server side tasks, change the current visuals etc.}
+\begin{enumerate}
+    \item Design a public API for requests.
+    \item Add the routes and implement the API in the Flask application.
+    \item Create a new Docker container (and possibly volume) for the new plug-in.
+    \item Connect the new container to the existing Docker-compose network.
+    \item Bind the Celery configuration files to the new container.
+    \item Implement the wanted functionality in the Docker container.
+    \item Introduce the new server task to the frontend components and enums.
+    \item Provide communication between the frontend and the new server-side task via API calls.
+\end{enumerate}
+
+Implementing a new server-side plug-in is a complex task and different plug-ins may require different approaches. Therefore, it is highly recommended to have a look at our molecular docking example that is described in detail in \cref{subsec:server-side-plugins} to understand the integration process.
