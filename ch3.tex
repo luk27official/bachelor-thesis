@@ -3,7 +3,6 @@
 
 In this chapter, the user documentation is presented. Firstly, the deployment process is described. We distinguish between two types of users, regular users and developers. We expect regular users to use PrankWeb without modifying the existing code. On the other side, we expect developers to add their own plug-ins or make other changes to the existing architecture. For this purpose, we describe a guide for both types of users.
 
-
 \section{Deployment}
 \label{sec:deployment}
 
@@ -98,6 +97,95 @@ Official documentation for the local deployment is available at \url{https://git
 \section{Regular user}
 \label{sec:regular_user}
 \xxx{TODO: add some screenshots and a brief description of the UI (when the docking is implemented)}
+
+Regular users are not expected to modify the existing code. The following section describes how to use the application.
+
+The only requirement is to have a web browser with JavaScript and WebGL support.
+
+Firstly, select a protein structure for the analysis in an input form. Expected inputs are either a protein structure code for experimental structures from the RCSB PDB, a custom PDB or mmCIF file, or a UniProt ID of a predicted structure. It is possible to use conservation data from the HMM-based conservation database to provide more information for the prediction. For experimental structures, it is possible to restrict the prediction just for specified chains. The input form is shown in \cref{fig:input_form}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{img/pw_introsite.png}
+    \caption{Input form for the PrankWeb application.}
+    \label{fig:input_form}
+\end{figure}
+
+Then, a prediction task is created and sent to the backend. During the prediction, a log of the task is shown. After the task finishes, the viewers are shown. The PrankWeb viewers are shown in \cref{fig:prankweb_viewers}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{img/pw_predict.png}
+    \caption{The main PrankWeb interface showing visualizations of the \texttt{P21802} UniProt structure.}
+    \label{fig:prankweb_viewers}
+\end{figure}
+
+Once the protein visualization is loaded, three main panels appear: sequence visualization, structural visualization and the pocket panel.
+
+On the left side, both viewers visualizing the structure are shown. There is the RCSB 1D Saguaro Viewer on the top for the 1D visualization of the structure properties and predicted binding sites. On the bottom, we may see the Mol* viewer for the 3D visualization of the structure and pockets. 
+
+By default, the protein surface is displayed, and individual pocket areas are highlighted with different colors. Ligands may be displayed as separate molecules as well, if available. It is possible to change the colors of the protein based on the conservation or plDDT score in the tool box on the right side. For conservation coloring, darker residues depict higher score. For plDDT coloring, the colors are defined by the AlphaFold confidence score \cite{david2022alphafold}.
+
+The 3D structure may be rotated by dragging the mouse while holding the left mouse button. The zoom is controlled by the mouse wheel or by pinching on touch devices. For moving the protein structure, the right mouse button may be used. The structure may be reset to the default position by clicking the reset button in the top right corner of the 3D viewer.
+
+Mol* provides more features for the visualization. Using the buttons in the top-right corner, one can:
+
+\begin{itemize}
+    \item Reset the camera.
+    \item Create a snapshot of current visualization.
+    \item Toggle the advanced control panel.
+    \item Toggle full-screen mode.
+    \item Setup the scene such as the visualization background or the field of view.
+    \item Toggle the selection mode.
+\end{itemize}
+
+After toggling the advanced control panel, the following may be done:
+
+\begin{itemize}
+    \item Work with the structure and download it.
+    \item Toggle the state tree and thus toggle multiple of the available representations.
+    \item Save the current plugin state.
+    \item View the help panel.
+\end{itemize}
+
+For more information, please refer to the Mol* documentation at the official website\footnote{The Mol* documentation is available at \url{https://molstar.org/viewer-docs/}}.
+
+The RCSB 1D Saguaro Viewer displays the protein sequence. It does the following:
+
+\begin{itemize}
+    \item All chains are concatenated into a single sequence and shown at once.
+    \item Colored rectangles depict the predicted binding sites. The colors are the same as in the 3D viewer.
+    \item Real binding sites are shown as well. As real binding sites, we consider any residues within 4 \AA{} from a ligand atom.
+    \item If available, conservation and plDDT scores are shown as well.
+\end{itemize}
+
+The Mol* viewer and the 1D Saguaro Viewer are synchronized. This means that when one hovers over a residue in the 1D viewer, the corresponding residue in Mol* is highlighted. The same applies to the 3D viewer. When one hovers over a residue in Mol*, the corresponding residue in the 1D viewer is highlighted. Furthermore, after clicking on a residue in the 1D viewer, Mol* focuses on the corresponding residue.
+
+The right panel consists of of a tool box component, a structure information component, a task list component and a pocket list component. 
+
+The tool box component allows a change of the coloring of the protein structure as mentioned before, and to download information about the prediction.
+
+The structure information component simply shows the structure code.
+
+The task list component shows the list of all backend tasks that have been created (i.e. docking tasks).
+
+The pocket list component shows the list of all pockets in the structure. The pockets are sorted by their probability score. The pockets contain several buttons for the following interactions:
+
+\begin{itemize}
+    \item Display details about the pocket.
+    \item Show only the selected pocket.
+    \item Focus on the pocket in Mol*.
+    \item Hide the pocket.
+\end{itemize}
+
+The details about the pocket are shown in a modal dialog. From the dialog, it is possible to run the client-side and server-side tasks. The dialog window is shown in \cref{fig:pocket_details}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/pw_pocketdetails.png}
+    \caption{The pocket details dialog component.}
+    \label{fig:pocket_details}
+\end{figure}
 
 \section{Developer}
 \label{sec:developer}
