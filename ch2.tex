@@ -209,7 +209,7 @@ There are more state variables as well. \texttt{modalOpen} and \texttt{formData}
 
 As the task results are persistent on the server, a new variable called \texttt{serverTasks} was introduced in the main component of the app. This component then periodically checks for all computed tasks for the given structure. The objects in this array are mutable and are modified for the purpose of the frontend rendering, so only the response data for tasks completed in this session are saved.
 
-This allows us to render the hashes of the tasks that were computed both in this session and in previous ones. For this purpose, a new component called \texttt{TaskList} was introduced to display the list of tasks. \xxx{TODO: maybe we won't use this component in the end, so mention that its just available but not used}
+This allows us to render the hashes of the tasks that were computed both in this session and in previous ones. For this purpose, a new component called \texttt{TaskList} was introduced to display the list of tasks. This component is open to further development.
 
 One last change was made to the \texttt{PocketDialogDetails} component. A new component \texttt{PocketRunningTasks} was created to display a list of tasks that are either running or completed in this session. This is done to make sure that the task results are available to the user in case the dialog is closed and reopened. Moreover, this allows the user to enter multiple parameters for the same task and see the results for all of them.
 
