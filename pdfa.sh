@@ -4,8 +4,8 @@
 # you use this on the thesis, it _will_ become PDF/A compliant (and SIS will
 # accept it), but won't contain the magic PDF/A "stamp" and will show only as
 # normal PDF-1.4. :(
-gswin32 -dPDFA=1 -dBATCH -dNOPAUSE -sProcessColorModel=DeviceCMYK -sColorConversionStrategy=UseDeviceIndependentColor -sDEVICE=pdfwrite -dPDFACompatibilityPolicy=3 -sOutputFile="pdfa-thesis.pdf" "thesis.pdf"
-
+gswin32 -dPDFA=1 -dBATCH -dNOPAUSE -dNoOutputFonts -sProcessColorModel=DeviceCMYK -sColorConversionStrategy=UseDeviceIndependentColor -sDEVICE=pdfwrite -dPDFACompatibilityPolicy=3 -sOutputFile="pdfa-thesis.pdf" "thesis.pdf"
+#gswin32 -q -dNOPAUSE -dBATCH -dNoOutputFonts -sDEVICE=pdfwrite -dPDFA=2 -dPDFACompatibilityPolicy=1 -sColorConversionStrategy=RGB -dOverrideICC=true -dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode -dDownsampleColorImages=false -dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode -dDownsampleGrayImages=false -sOutputFile=vystup.pdf thesis.pdf
 # Notes:
 #
 # PDFACompatibilityPolicy=3 actually doesn't exist. A bug in ghostscript
