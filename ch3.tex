@@ -6,14 +6,14 @@ In this chapter, the user documentation is presented. Firstly, the deployment pr
 \section{Deployment}
 \label{sec:deployment}
 
-This section describes how to deploy the application. The preffered way is to deploy PrankWeb using Docker.
+This section describes how to deploy the application. The preferred way is to deploy PrankWeb using Docker.
 
 \subsection{Docker deployment}
 \label{subsec:docker_deployment}
 
 Firstly, Docker and Docker Compose need to be installed\footnote{Downloadable from the official website at \url{https://docs.docker.com/get-docker/}}. 
 
-After installing Docker, the PrankWeb repository needs to be cloned, preferrably using Git\footnote{Downloadable from the official website at \url{https://git-scm.com/downloads}}.
+After installing Docker, the PrankWeb repository needs to be cloned, preferably using Git\footnote{Downloadable from the official website at \url{https://git-scm.com/downloads}}.
 
 \begin{enumerate}
     \item Create a directory for the PrankWeb repository and navigate to it.
@@ -34,7 +34,7 @@ After installing Docker, the PrankWeb repository needs to be cloned, preferrably
 
     docker volume create --name prankweb_docking --opt type=none --opt device=/tmp/docking --opt o=bind
     \end{lstlisting}
-    \item Optionally, create a \texttt{.env} file to change the default variables defined in the \texttt{docker-compose.yml} file. Notice that UID and GID need to have write permissions to the directories created in the previous steps.
+    \item Optionally, create a \texttt{.env} file to change the default variables defined in the \texttt{docker-compose.yml} file. Notice that UID and GID need to have the write permissions to the directories created in the previous steps.
     \item Build the Docker images using the following command:
     \begin{lstlisting}
     docker-compose build
@@ -49,14 +49,14 @@ After installing Docker, the PrankWeb repository needs to be cloned, preferrably
     \end{lstlisting}
 \end{enumerate}
 
-The application is now be accessible at \url{http://localhost:8020/}.
+The application is now accessible at \url{http://localhost:8020/}.
 
 Although the main deployment process will not change much, the best way to get the current information is to refer to the official documentation at \url{https://github.com/cusbg/p2rank-framework/wiki/PrankWeb-deploy-with-Docker}.
 
 \subsection{Local deployment}
 \label{subsec:local_deployment}
 
-The local deployment is not recommended, as the support for some components is limited.
+Local deployment is not recommended, as the support for some components is limited.
 
 The only component that is developed better locally is the frontend (when not considering backend API changes). To run the frontend locally, firstly clone the repository as described in \ref{subsec:docker_deployment}. Then, navigate to the \texttt{frontend} directory.
 
@@ -71,8 +71,8 @@ This is the default configuration:
         // Use this to server data from files. Thus, you can develop
         // frontend without the need to run another component.
         //"proxy-directory": "../../data/database/",
-        // Use the option bellow to proxy commands to task runner instance.
-        // This allows you to run tasks or connect to existing instance (https://prankweb.cz).
+        // Use the option below to proxy commands to the task runner instance.
+        // This allows you to run tasks or connect to an existing instance (https://prankweb.cz).
         "proxy-service": "https://prankweb.cz",
     }
 \end{lstlisting}
@@ -101,7 +101,7 @@ Regular users are not expected to modify the existing code. The following sectio
 
 The only requirement is to have a web browser with JavaScript and WebGL support.
 
-Firstly, select a protein structure for the analysis in an input form. Expected inputs are either a protein structure code for experimental structures from the RCSB PDB, a custom PDB or mmCIF file, or a UniProt ID of a predicted structure. It is possible to use conservation data from the HMM-based conservation database to provide more information for the prediction. For experimental structures, it is possible to restrict the prediction just for specified chains. The input form is shown in \cref{fig:input_form}.
+Firstly, select a protein structure for the analysis in an input form. Expected inputs are either a protein structure code for experimental structures from the RCSB PDB, a custom PDB or mmCIF file, or a UniProt ID of a predicted structure. It is possible to use conservation data from the HMM-based conservation database to provide more information for the prediction. For experimental structures, it is possible to restrict the prediction just to specified chains. The input form is shown in \cref{fig:input_form}.
 
 \begin{figure}[ht]
     \centering
@@ -119,19 +119,19 @@ Then, a prediction task is created and sent to the backend. During the predictio
     \label{fig:prankweb_viewers}
 \end{figure}
 
-Once the protein visualization is loaded, three main panels appear: sequence visualization, structural visualization and the pocket panel.
+Once the protein visualization is loaded, three main panels appear - sequence visualization, structural visualization and the pocket panel.
 
-On the left side, both viewers visualizing the structure are shown. There is the RCSB 1D Saguaro Viewer on the top for the 1D visualization of the structure properties and predicted binding sites. On the bottom, we may see the Mol* viewer for the 3D visualization of the structure and pockets. 
+On the left side, both viewers visualizing the structure are shown. There is the RCSB 1D Saguaro Viewer on the top for the 1D visualization of the properties of the structure and predicted binding sites. On the bottom, we may see the Mol* viewer for the 3D visualization of the structure and pockets. 
 
-By default, the protein surface is displayed, and individual pocket areas are highlighted with different colors. Ligands may be displayed as separate molecules as well, if available. It is possible to change the colors of the protein based on the conservation or plDDT score in the tool box on the right side. For conservation coloring, darker residues depict higher score. For plDDT coloring, the colors are defined by the AlphaFold confidence score \cite{david2022alphafold}.
+By default, the protein surface is displayed, and individual pocket areas are highlighted with different colors. Ligands may be displayed as separate molecules as well, if available. It is possible to change the colors of the protein based on the conservation or plDDT score in the toolbox on the right side. For conservation coloring, darker residues depict a higher score. For plDDT coloring, the colors are defined by the AlphaFold confidence score \cite{david2022alphafold}.
 
 The 3D structure may be rotated by dragging the mouse while holding the left mouse button. The zoom is controlled by the mouse wheel or by pinching on touch devices. For moving the protein structure, the right mouse button may be used. The structure may be reset to the default position by clicking the reset button in the top right corner of the 3D viewer.
 
-Mol* provides more features for the visualization. Using the buttons in the top-right corner, one can:
+Mol* provides more features for visualization. Using the buttons in the top-right corner, one can:
 
 \begin{itemize}
     \item Reset the camera.
-    \item Create a snapshot of current visualization.
+    \item Create a snapshot of the current visualization.
     \item Toggle the advanced control panel.
     \item Toggle full-screen mode.
     \item Setup the scene such as the visualization background or the field of view.
@@ -158,11 +158,11 @@ The RCSB 1D Saguaro Viewer displays the protein sequence. It does the following:
     \item If available, conservation and plDDT scores are shown as well.
 \end{itemize}
 
-The Mol* viewer and the 1D Saguaro Viewer are synchronized. This means that when one hovers over a residue in the 1D viewer, the corresponding residue in Mol* is highlighted. The same applies to the 3D viewer. When one hovers over a residue in Mol*, the corresponding residue in the 1D viewer is highlighted. Furthermore, after clicking on a residue in the 1D viewer, Mol* focuses on the corresponding residue.
+The Mol* viewer and the 1D Saguaro Viewer are synchronized. This means that when hovering over a residue in the 1D viewer, the corresponding residue in Mol* is highlighted. The same applies to the 3D viewer. When hovering over a residue in Mol*, the corresponding residue in the 1D viewer is highlighted. Furthermore, after clicking on a residue in the 1D viewer, Mol* focuses on the corresponding residue.
 
-The right panel consists of of a tool box component, a structure information component, a task list component and a pocket list component. 
+The right panel consists of a toolbox component, a structure information component, a task list component and a pocket list component. 
 
-The tool box component allows a change of the coloring of the protein structure as mentioned before, and to download information about the prediction.
+The toolbox component allows a change in the coloring of the protein structure as mentioned before, and to download information about the prediction.
 
 The structure information component simply shows the structure code.
 
@@ -196,7 +196,7 @@ Before reading the contents of this section, please familiarize yourself with th
 \subsection{Client-side plug-ins}
 \label{subsec:dev_client_side}
 
-Implementing custom client-side plug-ins is simple. The creation may be simplified to the following steps:
+Implementing custom client-side plug-ins is simple. The creation may be simplified into the following steps:
 
 \begin{enumerate}
     \item Introduce a new task type in the \texttt{frontend/custom-types.ts} file by adding a new value to the \texttt{ClientTaskType} enum.
