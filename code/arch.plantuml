@@ -1,0 +1,51 @@
+@startuml PrankWeb
+
+hide empty members
+
+class "DOM Root" as domroot
+
+class "Mol* Viewer" as molviewer
+class "1D RCSB Saguaro Viewer" as saguaro
+
+class "Application (React)" as app
+class "PocketList" as pocketlist
+
+class "ToolBox" as toolbox 
+class "TaskList" as tasklist
+class "StructureInformation" as structureinformation
+class "Pocket" as pocket
+class "DraggableDialog" as draggableDialog
+
+class "PocketDetails" as pocketdetails
+class "PocketDialogDetails" as pocketdialogdetails
+class "PocketClientTask" as pocketclienttask
+class "PocketServerParametrizedTask" as pocketserverparametrizedtask
+class "PocketRunningTasks" as pocketrunningtasks
+
+class "PocketProperty" as pocketproperty
+
+domroot --> molviewer
+domroot --> saguaro
+domroot --> app
+
+app --> toolbox
+app --> tasklist
+app --> structureinformation
+app --> pocketlist
+
+pocketlist --> "n" pocket
+
+pocket --> pocketdetails
+pocket --> draggableDialog
+
+pocketdetails --> "n" pocketproperty
+
+draggableDialog .. pocketdetails
+draggableDialog --> pocketdialogdetails
+
+pocketdialogdetails --> "n" pocketproperty
+pocketdialogdetails --> "n" pocketclienttask
+pocketdialogdetails --> "n" pocketserverparametrizedtask
+pocketdialogdetails --> pocketrunningtasks
+
+@enduml
