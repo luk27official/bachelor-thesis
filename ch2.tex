@@ -6,7 +6,7 @@ This chapter will introduce the reader to the code changes made to the original 
 \section{Frontend}
 \label{sec:frontend}
 
-The frontend of PrankWeb works as a TypeScript application. TypeScript is transpiled to JavaScript and bundled using Webpack. The application uses React for rendering a panel containing a toolbox (see \cref{fig:toolbox}), structure information and pocket data. Styles are provided by CSS files and SCSS Bootstrap. The application uses MaterialUI for a few of the component designs. All packages used in PrankWeb are installed using the npm tool. This architecture was already present in the original interface.
+The frontend of PrankWeb works as a TypeScript application. TypeScript is transpiled to JavaScript and bundled using Webpack. The application uses React for rendering a panel containing a toolbox (see \cref{fig:toolbox}), structure information and pocket data. Styles are provided by CSS files and SCSS Bootstrap. The application uses Material UI for a few of the component designs. All packages used in PrankWeb are installed using the npm tool. This architecture was already present in the original interface.
 
 \begin{figure}[ht]
     \centering
@@ -31,14 +31,14 @@ An overview of the entire frontend architecture including is shown in \cref{fig:
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{img/pw_website_arch.png}
-    \caption{The PrankWeb frontend architecture.}
+    \caption{An UML diagram of the PrankWeb frontend architecture.}
     \label{fig:frontend}
 \end{figure}
 
 \subsection{MolStar}
 \label{subsec:frontend-molstar}
 
-MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol and NGL libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly. An example of the visualization is shown in \cref{fig:molstar}.
+MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol \cite{sehnal2017litemol} and NGL \cite{nguyen2018nglview} libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly. An example of the visualization is shown in \cref{fig:molstar}.
 
 \begin{figure}[htb]
     \centering
@@ -252,7 +252,7 @@ The newly created Docker container is described in the \texttt{Dockerfile}. All 
 
 Firstly, the structure is unzipped from the gzipped file created during the initial prediction. Then, we treat \texttt{.pdb} files a bit differently, structures in this file format are cleaned using the lePro tool to remove unnecessary information. After the possible structure cleanup, a tool called \texttt{prepare\_receptor} from the ADFR Suite to prepare the structure for docking \cite{ravindranath2015autodockfr}. Moving on, ligand preparation is done using the \texttt{rdkit} and \texttt{meeko} Python packages \cite{landrum2013rdkit}. The last step before docking is to prepare the bounding box for the docking program. This is done manually by parsing the input file, saving the result to a text file.
 
-In this stage, everything is properly set up for the docking. We use the \texttt{AutoDock Vina} program for the docking. AutoDock Vina enables us to dock the ligand in a simple and fast way, on the other side, the results are not as accurate \cite{trott2010autodock}. We still decided to use this tool due to a rather simple setup and fast computation. The docking program is invoked with the prepared parameters and the results are saved to a public folder.
+In this stage, everything is properly set up for the docking. We use the AutoDock Vina program for the docking. AutoDock Vina enables us to dock the ligand in a simple and fast way, on the other side, the results are not as accurate \cite{trott2010autodock}. We still decided to use this tool due to a rather simple setup and fast computation. The docking program is invoked with the prepared parameters and the results are saved to a public folder.
 
 After the docking, the info file is updated with the result. The output file then may be downloaded by the actual user. The file may be viewed in several tools, such as PyMOL.
 
