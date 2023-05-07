@@ -40,7 +40,7 @@ An overview of the entire frontend architecture including is shown in \cref{fig:
 
 MolStar (also Mol*) is a TypeScript library for visualizing protein structures. MolStar combines the strengths of the LiteMol \cite{sehnal2017litemol} and NGL \cite{nguyen2018nglview} libraries to provide a high-performance tool for bioinformatic scientists. The library is open-source and the code may be found on GitHub\footnote{https://github.com/molstar/molstar}. One downside of MolStar is that it lacks detailed documentation. There are some examples available in the GitHub repository either directly in the source codes or in issues, but for more complicated code, the user may need to create their own issue and ask the developers directly. An example of the visualization is shown in \cref{fig:molstar}.
 
-\begin{figure}[htb]
+\begin{figure}[htp]
     \centering
     \includegraphics[width=\textwidth]{img/molstar_2src.png}
     \caption{A screenshot of the MolStar viewer for the \texttt{2SRC} structure. The structure is shown in cartoon representation and is colored by the conservation score. The pockets are shown in the surface representation.}
@@ -91,7 +91,7 @@ Alongside the MolStar plugin, we use the RCSB Saguaro 1D Feature Viewer to displ
 
 The RCSB Saguaro 1D Feature Viewer is a TypeScript library for visualizing protein features in a 1D view. An example usage is shown in \cref{fig:1d-viewer}. The code is available on GitHub\footnote{\url{https://github.com/rcsb/rcsb-saguaro}}. Documentation is available and the usage is simple, but it is important to keep in mind that the library is still under active development and the interface may change in the future.
 
-\begin{figure}[htb]
+\begin{figure}[htp]
     \centering
     \includegraphics[width=\linewidth]{img/rcsb_2src.pdf}
     \caption{The RCSB Saguaro 1D Feature Viewer for the \texttt{2SRC} structure.}
@@ -218,11 +218,11 @@ There are more state variables as well. \texttt{modalOpen} and \texttt{formData}
 
 As the task results are persistent on the server, a new variable called \texttt{serverTasks} was introduced in the main component of the app. This component then periodically checks for all computed tasks for the given structure. The objects in this array are mutable and are modified for the purpose of the frontend rendering, so only the response data for tasks completed in this session are saved.
 
-This allows us to render the hashes of the tasks that were computed both in this session and in previous ones. For this purpose, a new component called \texttt{TaskList} was introduced to display the list of tasks. This component is open to further development.
+This allows us to render the hashes of the tasks that were computed both in this session and in previous ones. For this purpose, a new component called \texttt{TaskList} was introduced to display the list of tasks.
 
 One last change was made to the \texttt{PocketDialogDetails} component. A new component \texttt{PocketRunningTasks} was created to display a list of tasks that are either running or completed in this session. This is done to make sure that the task results are available to the user in case the dialog is closed and reopened. Moreover, this allows the user to enter multiple parameters for the same task and see the results for all of them.
 
-One of the goals of this thesis was to implement basic \textbf{server-side molecular docking}. Docking may be computationally very demanding, this makes it a perfect candidate for a server-side plug-in.
+One of the goals of this thesis was to implement basic \textbf{server-side molecular docking}. Docking may be computationally very demanding, which makes it a perfect candidate for a server-side plug-in.
 
 Firstly, we designed a public API for docking requests. There were three main needs:
 \begin{enumerate}
@@ -236,7 +236,7 @@ The API routes were added to the Flask configuration file. The routes are define
     An edited version of the \texttt{api\_v2.py} file.
 }]{code/api-v2.py}
 
-After designing the routes, a new class called \texttt{DockingTask} was created. This class is responsible for serving the API requests. This includes the definition of the directory structure, saving the input files, preparing the info file, and calling the actual docking tool on the backend. In this class, most of the file errors are handled, as there are many opportunities for wrong inputs and requests. As all of the methods are important, we will focus on the one that is responsible for the actual docking. That is the \texttt{submit\_directory\_for\_docking} defined in the Celery client configuration file. This method sends a task named \texttt{docking} to the Celery queue. Note that for docking, a new Celery queue was created in the configuration file.
+After designing the routes, a new class called \texttt{DockingTask} was created. \texttt{DockingTask} class is responsible for serving the API requests. This includes the definition of the directory structure, saving the input files, preparing the info file, and calling the actual docking tool on the backend. Most of the file errors are handled in this class, as there are many opportunities for wrong inputs and requests. As all of the methods are important, we will focus on the one that is responsible for the actual docking. That is the \texttt{submit\_directory\_for\_docking} defined in the Celery client configuration file. This method sends a task named \texttt{docking} to the Celery queue. Note that for docking, a new Celery queue was created in the configuration file.
 
 \lstinputlisting[language=Python,caption={
     An edited version of the \texttt{celery\_client.py} file.
@@ -252,12 +252,14 @@ The newly created Docker container is described in the \texttt{Dockerfile}. All 
 
 Firstly, the structure is unzipped from the gzipped file created during the initial prediction. Then, we treat \texttt{.pdb} files a bit differently, structures in this file format are cleaned using the lePro tool to remove unnecessary information. After the possible structure cleanup, a tool called \texttt{prepare\_receptor} from the ADFR Suite to prepare the structure for docking \cite{ravindranath2015autodockfr}. Moving on, ligand preparation is done using the \texttt{rdkit} and \texttt{meeko} Python packages \cite{landrum2013rdkit}. The last step before docking is to prepare the bounding box for the docking program. This is done manually by parsing the input file, saving the result to a text file.
 
-In this stage, everything is properly set up for the docking. We use the AutoDock Vina program for the docking. AutoDock Vina enables us to dock the ligand in a simple and fast way, on the other side, the results are not as accurate \cite{trott2010autodock}. We still decided to use this tool due to a rather simple setup and fast computation. The docking program is invoked with the prepared parameters and the results are saved to a public folder.
+In this stage, everything is properly set up for the docking. We use the AutoDock Vina \cite{trott2010autodock} program for the docking. AutoDock Vina enables us to dock the ligand in a simple and fast way, on the other side, the results are not as accurate. We still decided to use this tool due to a rather simple setup and fast computation. The docking program is invoked with the prepared parameters and the results are saved to a public folder.
 
 After the docking, the info file is updated with the result. The output file then may be downloaded by the actual user. The file may be viewed in several tools, such as PyMOL.
 
-Now, the only thing left is to implement the frontend components to provide a user-friendly way to dock the molecules. We created a \texttt{ServerTaskData} enum for potential, alongside to \texttt{ServerTaskDataContents} that is an interface for data from the server side. The main logic of server-side plugins is defined by implementing the \texttt{PocketServerParametrizedTask} component that was added to the \texttt{PocketDialogDetails} component in a similar way to the client plug-ins (see \cref{subsec:client-side-plugins}). The implementation was done in the \texttt{tasks/server-docking-task.tsx} file. This file has private methods that compute a bounding box for docking before submitting the task, and public exported methods that are responsible for calling the API and displaying the results. One of the methods should hash the input, but as long as we are using SMILES molecule representation \cite{weininger1988smiles}, there is no need to hash the input.
+Now, the only thing left is to implement the frontend components to provide a user-friendly way to dock the molecules.
 
-To finish the frontend implementation, a few more components are updated in order to show all results correctly. Firstly, we modified the \texttt{Application} component to keep all of the docking tasks in their state variable. This is done in the \texttt{getTaskList} method to create an ability to show all results of the completed tasks in the current session. This state variable called \texttt{serverTasks} then propagates to other components. Lastly, we bound the previously created methods to the \texttt{PocketRunningTasks} component to display the results of the docking tasks in the dialog window.
+We created a \texttt{ServerTaskData} enum for the potential to introduce new server-side plug-ins. Alongside the enum, the \texttt{ServerTaskDataContents} interface for data from the server side. The main logic of server-side plugins is defined by implementing the \texttt{PocketServerParametrizedTask} component that was added to the \texttt{PocketDialogDetails} component in a similar way to the client plug-ins (see \cref{subsec:client-side-plugins}). The implementation was done in the \texttt{tasks/server-docking-task.tsx} file. This file has private methods that compute a bounding box for docking before submitting the task, and public exported methods that are responsible for calling the API and displaying the results. One of the methods could hash the input, but as long as we are using SMILES molecule representation \cite{weininger1988smiles}, there is no need to hash the input.
+
+To finish the frontend implementation, a few more components were updated in order to show all results correctly. Firstly, we modified the \texttt{Application} component to keep all of the docking tasks in their state variable. This is done in the \texttt{getTaskList} method to create an ability to show all results of the completed tasks in the current session. This state variable called \texttt{serverTasks} then propagates to other components. Lastly, we bound the previously created methods to the \texttt{PocketRunningTasks} component to display the results of the docking tasks in the dialog window.
 
 Creating a custom new server-side plug-in is briefly described in \cref{sec:developer}.
